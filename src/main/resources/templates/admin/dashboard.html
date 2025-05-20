@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{admin/layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Admin Dashboard - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <!-- Admin Header Banner with CSS-based image placeholder -->
+        <div class="admin-header">
+            <div class="admin-header-overlay">
+                <div class="container">
+                    <h2 class="mb-2"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
+                    <p class="lead">Manage users, vehicles, and rental bookings from your centralized control panel</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container py-4">
+            <!-- Quick Stats -->
+            <div class="row mb-4">
+                <div class="col">
+                    <h2 class="pb-2 border-bottom mb-4">
+                        <i class="fas fa-chart-line"></i> Quick Stats
+                    </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4 mb-3">
+                                <div class="p-3 border rounded">
+                                    <i class="fas fa-users fa-2x mb-2"></i>
+                                    <h4 th:text="${users != null ? users.size() : 0}">0</h4>
+                                    <p class="mb-0">Total Users</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="p-3 border rounded">
+                                    <i class="fas fa-user-shield fa-2x mb-2"></i>
+                                    <h4 th:text="${users != null ? #lists.size(#arrays.asList(users.?[role == 'ADMIN'])) : 0}">0</h4>
+                                    <p class="mb-0">Admins</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="p-3 border rounded">
+                                    <i class="fas fa-user fa-2x mb-2"></i>
+                                    <h4 th:text="${users != null ? #lists.size(#arrays.asList(users.?[role == 'USER'])) : 0}">0</h4>
+                                    <p class="mb-0">Users</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-tools"></i> Admin Tools</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/admin/settings}" class="btn btn-outline-dark">
+                                <i class="fas fa-cogs"></i> Admin Settings
+                            </a>
+                            <a th:href="@{/h2-console}" target="_blank" class="btn btn-outline-dark">
+                                <i class="fas fa-database"></i> Database Console
+                            </a>
+                            <a th:href="@{/}" class="btn btn-outline-dark">
+                                <i class="fas fa-home"></i> View Main Site
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Home - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <!-- Hero Section with CSS-based Image Placeholder -->
+        <div class="hero-section mb-5">
+            <div class="container text-center">
+                <h1 class="display-4 fw-bold mb-4 text-white">Sri Lanka's Premier Vehicle Rental Service</h1>
+                <p class="lead mb-4 text-white">A reliable and efficient way to rent vehicles for your needs in Sri Lanka</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a th:href="@{/register}" class="btn btn-dark btn-lg px-4 me-md-2">
+                        <i class="fas fa-user-plus"></i> Register Now
+                    </a>
+                    <a th:href="@{/login}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="container mb-5">
+            <div class="row text-center mb-4">
+                <div class="col-12">
+                    <h2 class="border-bottom pb-2 mb-4"><i class="fas fa-star"></i> Our Services</h2>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="vehicle-placeholder"></div>
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="fas fa-car"></i> Diverse Vehicle Fleet</h4>
+                            <p class="card-text">Choose from our wide range of vehicles including cars, bikes, vans, and trucks to meet your specific needs.</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">View Vehicles</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="vehicle-placeholder"></div>
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="fas fa-hand-holding-usd"></i> Affordable Rates</h4>
+                            <p class="card-text">Enjoy competitive pricing, flexible rental periods, and special discounts for long-term rentals.</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">View Pricing</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="vehicle-placeholder"></div>
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="fas fa-shield-alt"></i> Safe & Secure</h4>
+                            <p class="card-text">All our vehicles are regularly maintained and sanitized to ensure your safety and comfort.</p>
+                            <a href="#" class="btn btn-sm btn-outline-dark">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Steps Section -->
+        <div class="container mb-5 py-5">
+            <div class="row text-center mb-4">
+                <div class="col-12">
+                    <h2 class="border-bottom pb-2 mb-4"><i class="fas fa-list-ol"></i> How It Works</h2>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Step 1 -->
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded mb-3">
+                        <i class="fas fa-user-plus fa-3x mb-3 text-dark"></i>
+                        <h4>1. Register</h4>
+                        <p>Create an account with your NIC and driving license details.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded mb-3">
+                        <i class="fas fa-search fa-3x mb-3 text-dark"></i>
+                        <h4>2. Browse</h4>
+                        <p>Search our wide range of vehicles and select the one that suits your needs.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded mb-3">
+                        <i class="fas fa-credit-card fa-3x mb-3 text-dark"></i>
+                        <h4>3. Book & Pay</h4>
+                        <p>Make a reservation and securely pay online or in person.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded mb-3">
+                        <i class="fas fa-car fa-3x mb-3 text-dark"></i>
+                        <h4>4. Drive</h4>
+                        <p>Pick up your vehicle and enjoy your journey with peace of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="container mb-5">
+            <div class="card bg-dark text-white">
+                <div class="card-body text-center py-5">
+                    <h2 class="card-title mb-3 text-white">Ready to get started?</h2>
+                    <p class="card-text mb-4 text-white">Register now and start your journey with the best vehicle rental service in Sri Lanka.</p>
+                    <a th:href="@{/register}" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus"></i> Register Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
