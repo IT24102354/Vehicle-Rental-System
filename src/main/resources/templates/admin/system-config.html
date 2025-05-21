@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{admin/layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>System Configuration - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="container-fluid px-4 py-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">System Configuration</li>
+                </ol>
+            </nav>
+            
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Configure system settings</strong> - Changes will apply immediately after saving.
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-1"></i> <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-1"></i> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="row">
+                <!-- General System Settings -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>General Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/system-config}" method="post">
+                                <input type="hidden" name="configType" value="general">
+                                
+                                <div class="mb-3">
+                                    <label for="systemName" class="form-label">System Name</label>
+                                    <input type="text" class="form-control" id="systemName" name="systemName" 
+                                           value="Vehicle Rental System">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="contactEmail" class="form-label">Contact Email</label>
+                                    <input type="email" class="form-control" id="contactEmail" name="contactEmail" 
+                                           value="contact@vehiclerental.com">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="phonenumber" class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" id="phonenumber" name="phonenumber" 
+                                           value="+94 11 2345678">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="currency" class="form-label">Currency</label>
+                                    <select class="form-select" id="currency" name="currency">
+                                        <option value="USD" selected>USD ($)</option>
+                                        <option value="LKR">LKR (Rs)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="maintenanceMode" name="maintenanceMode">
+                                    <label class="form-check-label" for="maintenanceMode">Maintenance Mode</label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Save General Settings
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rental Settings -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="fas fa-file-contract me-2"></i>Rental Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/system-config}" method="post">
+                                <input type="hidden" name="configType" value="rental">
+                                
+                                <div class="mb-3">
+                                    <label for="minRentalDays" class="form-label">Minimum Rental Days</label>
+                                    <input type="number" class="form-control" id="minRentalDays" name="minRentalDays" 
+                                           value="1" min="1" max="30">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="maxRentalDays" class="form-label">Maximum Rental Days</label>
+                                    <input type="number" class="form-control" id="maxRentalDays" name="maxRentalDays" 
+                                           value="30" min="1" max="365">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="lateFee" class="form-label">Late Return Fee (% per day)</label>
+                                    <input type="number" class="form-control" id="lateFee" name="lateFee" 
+                                           value="10" min="0" max="100">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="depositPercent" class="form-label">Required Deposit (% of rental)</label>
+                                    <input type="number" class="form-control" id="depositPercent" name="depositPercent" 
+                                           value="20" min="0" max="100">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="requireDrivingLicense" 
+                                          name="requireDrivingLicense" checked>
+                                    <label class="form-check-label" for="requireDrivingLicense">Require Driving License</label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Save Rental Settings
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Email Settings -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Email Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/system-config}" method="post">
+                                <input type="hidden" name="configType" value="email">
+                                
+                                <div class="mb-3">
+                                    <label for="smtpServer" class="form-label">SMTP Server</label>
+                                    <input type="text" class="form-control" id="smtpServer" name="smtpServer" 
+                                           value="smtp.gmail.com">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="smtpPort" class="form-label">SMTP Port</label>
+                                    <input type="number" class="form-control" id="smtpPort" name="smtpPort" 
+                                           value="587">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="emailUsername" class="form-label">Email Username</label>
+                                    <input type="text" class="form-control" id="emailUsername" name="emailUsername" 
+                                           value="notification@vehiclerental.com">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="emailPassword" class="form-label">Email Password</label>
+                                    <input type="password" class="form-control" id="emailPassword" name="emailPassword" 
+                                           value="••••••••">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sendWelcomeEmail" 
+                                          name="sendWelcomeEmail" checked>
+                                    <label class="form-check-label" for="sendWelcomeEmail">Send Welcome Email</label>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Save Email Settings
+                                </button>
+                                
+                                <button type="button" class="btn btn-outline-secondary ms-2">
+                                    <i class="fas fa-paper-plane me-1"></i> Test Email
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Settings -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/system-config}" method="post">
+                                <input type="hidden" name="configType" value="payment">
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Enabled Payment Methods</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="creditCard" 
+                                              name="paymentMethods" value="creditCard" checked>
+                                        <label class="form-check-label" for="creditCard">Credit Card</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="paypal" 
+                                              name="paymentMethods" value="paypal" checked>
+                                        <label class="form-check-label" for="paypal">PayPal</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="bankTransfer" 
+                                              name="paymentMethods" value="bankTransfer" checked>
+                                        <label class="form-check-label" for="bankTransfer">Bank Transfer</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="cash" 
+                                              name="paymentMethods" value="cash" checked>
+                                        <label class="form-check-label" for="cash">Cash</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="taxRate" class="form-label">Tax Rate (%)</label>
+                                    <input type="number" class="form-control" id="taxRate" name="taxRate" 
+                                           value="15" min="0" max="100">
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Save Payment Settings
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

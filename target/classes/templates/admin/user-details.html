@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>User Details - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>User Details</h2>
+            <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary">Back to Dashboard</a>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" th:text="${targetUser.fullName + ' (' + targetUser.username + ')'}">User Name (username)</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2">Basic Information</h5>
+                        <div class="mb-3">
+                            <strong>User ID:</strong>
+                            <span th:text="${targetUser.id}">1</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Username:</strong>
+                            <span th:text="${targetUser.username}">username</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Full Name:</strong>
+                            <span th:text="${targetUser.fullName}">Full Name</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Email:</strong>
+                            <span th:text="${targetUser.email}">email@example.com</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Phone:</strong>
+                            <span th:text="${targetUser.phone}">+94 71 123 4567</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Role:</strong>
+                            <span th:text="${targetUser.role}" 
+                                  th:class="${targetUser.role == 'ADMIN' ? 'badge bg-danger' : 'badge bg-success'}">
+                                USER
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2">Sri Lankan Specific Information</h5>
+                        <div class="mb-3">
+                            <strong>NIC Number:</strong>
+                            <span th:text="${targetUser.nicNumber}">123456789V</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Driving License:</strong>
+                            <span th:text="${targetUser.drivingLicenseNumber}">DL12345678</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>License Expiry:</strong>
+                            <span th:text="${targetUser.drivingLicenseExpiry ?: 'Not provided'}">01/01/2025</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Address:</strong>
+                            <span th:text="${targetUser.address}">123 Main St, Colombo</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Emergency Contact:</strong>
+                            <span th:text="${targetUser.emergencyContactName ?: 'Not provided'}">Contact Name</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Emergency Phone:</strong>
+                            <span th:text="${targetUser.emergencyContactPhone ?: 'Not provided'}">+94 71 987 6543</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a th:href="@{'/admin/user/delete/' + ${targetUser.id}}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this user?')">
+                        Delete User
+                    </a>
+                    <a th:href="@{/admin/dashboard}" class="btn btn-primary">Back to User List</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

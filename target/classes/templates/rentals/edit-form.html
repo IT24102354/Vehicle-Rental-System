@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Edit Rental - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="container py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/rentals/my}">My Rentals</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/rentals/details/{id}(id=${rental.id})}">Rental Details</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Rental</li>
+                </ol>
+            </nav>
+            
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+                <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}">Error message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Edit Rental</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Vehicle Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex mb-3">
+                                        <div class="me-3">
+                                            <img th:if="${vehicle.imageUrl}" th:src="${vehicle.imageUrl}" class="img-fluid rounded" alt="Vehicle Image" style="width: 120px; height: 80px; object-fit: cover;">
+                                            <img th:unless="${vehicle.imageUrl}" th:src="@{/images/vehicle-placeholder.jpg}" class="img-fluid rounded" alt="Vehicle Image" style="width: 120px; height: 80px; object-fit: cover;">
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1" th:text="${vehicle.make + ' ' + vehicle.model}">Vehicle Name</h5>
+                                            <p class="mb-0 text-muted" th:text="${vehicle.year + ' • ' + vehicle.color}">Year • Color</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <strong>Registration:</strong> <span th:text="${vehicle.registrationNumber}">ABC123</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Daily Rate:</strong> <span th:text="${'$' + vehicle.dailyRate}">$50.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form th:action="@{/rentals/edit/{id}(id=${rental.id})}" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${rental.startDate}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${rental.endDate}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" th:text="${rental.notes}"></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/rentals/details/{id}(id=${rental.id})}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Rental</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

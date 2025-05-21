@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Register - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+
+        <div class="hero-section" style="height: 200px;">
+            <div class="container text-center">
+                <h1 class="display-4 fw-bold text-high-contrast-light"><i class="fas fa-sign-in-alt"></i> Register</h1>
+                <p class="lead text-high-contrast-light">Create your account and start renting vehicles</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0 text-white">Register New Account</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <form th:action="@{/register}" th:object="${user}" method="post">
+                            <h5 class="border-bottom pb-2 mb-3">Basic Information</h5>
+                            
+                            <div class="row">
+                                <!-- Username Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="username" 
+                                           th:field="*{username}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('username')}" 
+                                         th:errors="*{username}"></div>
+                                </div>
+                                
+                                <!-- Email Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" 
+                                           th:field="*{email}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('email')}" 
+                                         th:errors="*{email}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Password Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="password" 
+                                           th:field="*{password}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('password')}" 
+                                         th:errors="*{password}"></div>
+                                </div>
+                                
+                                <!-- Full Name Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="fullName" 
+                                           th:field="*{fullName}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('fullName')}" 
+                                         th:errors="*{fullName}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Phone Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="phone" 
+                                           th:field="*{phone}" required placeholder="+94 7X XXX XXXX">
+                                    <div class="text-danger" th:if="${#fields.hasErrors('phone')}" 
+                                         th:errors="*{phone}"></div>
+                                </div>
+                                
+                                <!-- Address Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="address" 
+                                           th:field="*{address}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('address')}" 
+                                         th:errors="*{address}"></div>
+                                </div>
+                            </div>
+
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">Rental Requirements</h5>
+                            
+                            <div class="row">
+                                <!-- NIC Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="nicNumber" class="form-label">NIC Number <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="nicNumber" 
+                                           th:field="*{nicNumber}" required placeholder="9 digits with V/X or 12 digits">
+                                    <div class="text-danger" th:if="${#fields.hasErrors('nicNumber')}" 
+                                         th:errors="*{nicNumber}"></div>
+                                    <div class="form-text">Format: 123456789V (old) or 199912345678 (new)</div>
+                                </div>
+                                
+                                <!-- Driving License Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="drivingLicenseNumber" class="form-label">Driving License No. <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="drivingLicenseNumber" 
+                                           th:field="*{drivingLicenseNumber}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('drivingLicenseNumber')}" 
+                                         th:errors="*{drivingLicenseNumber}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Driving License Expiry -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="drivingLicenseExpiry" class="form-label">License Expiry Date</label>
+                                    <input type="date" class="form-control" id="drivingLicenseExpiry" 
+                                           th:field="*{drivingLicenseExpiry}">
+                                </div>
+                            </div>
+                            
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">Emergency Contact Information</h5>
+                            
+                            <div class="row">
+                                <!-- Emergency Contact Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="emergencyContactName" class="form-label">Emergency Contact Name</label>
+                                    <input type="text" class="form-control" id="emergencyContactName" 
+                                           th:field="*{emergencyContactName}">
+                                </div>
+                                
+                                <!-- Emergency Contact Phone -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="emergencyContactPhone" class="form-label">Emergency Contact Phone</label>
+                                    <input type="text" class="form-control" id="emergencyContactPhone" 
+                                           th:field="*{emergencyContactPhone}" placeholder="+94 7X XXX XXXX">
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary">Register</button>
+                            </div>
+                        </form>
+                        
+                        <!-- Login Link -->
+                        <div class="mt-3 text-center">
+                            <p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

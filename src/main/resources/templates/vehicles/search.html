@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Vehicle Search - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="container mt-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/vehicles}">Vehicles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Advanced Search</li>
+                </ol>
+            </nav>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Advanced Vehicle Search</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/vehicles}" method="get" class="needs-validation" novalidate>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Basic Search Criteria</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="keyword" class="form-label">Keyword (Make, Model, Color)</label>
+                                    <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Enter keyword">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Vehicle Type</label>
+                                    <select class="form-select" id="type" name="type">
+                                        <option value="">All Vehicle Types</option>
+                                        <option value="car">Cars</option>
+                                        <option value="bike">Bikes</option>
+                                        <option value="truck">Trucks</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="year" class="form-label">Year</label>
+                                    <input type="number" class="form-control" id="year" name="year" min="1900">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="availableOnly" name="availableOnly" value="true">
+                                        <label class="form-check-label" for="availableOnly">Available Vehicles Only</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Price Range</h4>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="minPrice" class="form-label">Minimum Daily Rate (USD)</label>
+                                        <input type="number" class="form-control" id="minPrice" name="minPrice" min="0" step="0.01">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="maxPrice" class="form-label">Maximum Daily Rate (USD)</label>
+                                        <input type="number" class="form-control" id="maxPrice" name="maxPrice" min="0" step="0.01">
+                                    </div>
+                                </div>
+                                
+                                <h4 class="mb-3 mt-4">Additional Filters</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="fuelType" class="form-label">Fuel Type</label>
+                                    <select class="form-select" id="fuelType" name="fuelType">
+                                        <option value="">Any Fuel Type</option>
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Electric">Electric</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                        <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+                                        <option value="CNG">CNG</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="transmissionType" class="form-label">Transmission Type</label>
+                                    <select class="form-select" id="transmissionType" name="transmissionType">
+                                        <option value="">Any Transmission Type</option>
+                                        <option value="Manual">Manual</option>
+                                        <option value="Automatic">Automatic</option>
+                                        <option value="CVT">CVT</option>
+                                        <option value="Semi-Automatic">Semi-Automatic</option>
+                                        <option value="DCT">DCT</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Vehicle Type Specific Filters -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <ul class="nav nav-tabs card-header-tabs" id="vehicleTypeTabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="car-tab" data-bs-toggle="tab" data-bs-target="#car-filters" type="button" role="tab" aria-controls="car-filters" aria-selected="true">Car Filters</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="bike-tab" data-bs-toggle="tab" data-bs-target="#bike-filters" type="button" role="tab" aria-controls="bike-filters" aria-selected="false">Bike Filters</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="truck-tab" data-bs-toggle="tab" data-bs-target="#truck-filters" type="button" role="tab" aria-controls="truck-filters" aria-selected="false">Truck Filters</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="tab-content" id="vehicleTypeTabContent">
+                                            <!-- Car Filters -->
+                                            <div class="tab-pane fade show active" id="car-filters" role="tabpanel" aria-labelledby="car-tab">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="carType" class="form-label">Car Type</label>
+                                                            <select class="form-select" id="carType" name="carType">
+                                                                <option value="">Any Car Type</option>
+                                                                <option value="Sedan">Sedan</option>
+                                                                <option value="SUV">SUV</option>
+                                                                <option value="Hatchback">Hatchback</option>
+                                                                <option value="Coupe">Coupe</option>
+                                                                <option value="Convertible">Convertible</option>
+                                                                <option value="Wagon">Wagon</option>
+                                                                <option value="Van">Van</option>
+                                                                <option value="Minivan">Minivan</option>
+                                                                <option value="Pickup">Pickup</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="minSeats" class="form-label">Minimum Seats</label>
+                                                            <input type="number" class="form-control" id="minSeats" name="minSeats" min="1">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <div class="form-check form-switch mt-4">
+                                                                <input class="form-check-input" type="checkbox" id="hasAirConditioning" name="hasAirConditioning" value="true">
+                                                                <label class="form-check-label" for="hasAirConditioning">Has Air Conditioning</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input" type="checkbox" id="hasNavigation" name="hasNavigation" value="true">
+                                                                <label class="form-check-label" for="hasNavigation">Has Navigation</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Bike Filters -->
+                                            <div class="tab-pane fade" id="bike-filters" role="tabpanel" aria-labelledby="bike-tab">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="bikeType" class="form-label">Bike Type</label>
+                                                            <select class="form-select" id="bikeType" name="bikeType">
+                                                                <option value="">Any Bike Type</option>
+                                                                <option value="Sport">Sport</option>
+                                                                <option value="Cruiser">Cruiser</option>
+                                                                <option value="Touring">Touring</option>
+                                                                <option value="Standard">Standard</option>
+                                                                <option value="Dual Sport">Dual Sport</option>
+                                                                <option value="Off Road">Off Road</option>
+                                                                <option value="Scooter">Scooter</option>
+                                                                <option value="Moped">Moped</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="engineCapacity" class="form-label">Minimum Engine Capacity (cc)</label>
+                                                            <input type="number" class="form-control" id="engineCapacity" name="engineCapacity" min="0">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <div class="form-check form-switch mt-4">
+                                                                <input class="form-check-input" type="checkbox" id="hasABS" name="hasABS" value="true">
+                                                                <label class="form-check-label" for="hasABS">Has ABS</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Truck Filters -->
+                                            <div class="tab-pane fade" id="truck-filters" role="tabpanel" aria-labelledby="truck-tab">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="truckType" class="form-label">Truck Type</label>
+                                                            <select class="form-select" id="truckType" name="truckType">
+                                                                <option value="">Any Truck Type</option>
+                                                                <option value="Pickup">Pickup</option>
+                                                                <option value="Van">Van</option>
+                                                                <option value="Box">Box</option>
+                                                                <option value="Flatbed">Flatbed</option>
+                                                                <option value="Dump">Dump</option>
+                                                                <option value="Refrigerated">Refrigerated</option>
+                                                                <option value="Tanker">Tanker</option>
+                                                                <option value="Tractor">Tractor</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="minPayloadCapacity" class="form-label">Minimum Payload Capacity (tons)</label>
+                                                            <input type="number" class="form-control" id="minPayloadCapacity" name="minPayloadCapacity" min="0" step="0.1">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <div class="form-check form-switch mt-4">
+                                                                <input class="form-check-input" type="checkbox" id="hasTailLift" name="hasTailLift" value="true">
+                                                                <label class="form-check-label" for="hasTailLift">Has Tail Lift</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input" type="checkbox" id="hasRefrigeration" name="hasRefrigeration" value="true">
+                                                                <label class="form-check-label" for="hasRefrigeration">Has Refrigeration</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/vehicles}" class="btn btn-secondary">Back to List</a>
+                            <button type="submit" class="btn btn-primary">Search Vehicles</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
