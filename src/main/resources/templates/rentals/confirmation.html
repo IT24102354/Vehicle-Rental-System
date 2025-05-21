@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Booking Confirmation - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="container py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/rentals/my}">My Rentals</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Booking Confirmation</li>
+                </ol>
+            </nav>
+            
+            <div class="card mb-4 border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-check-circle"></i> Booking Confirmed</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="display-1 text-success mb-3">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h4>Your vehicle booking has been confirmed!</h4>
+                        <p class="text-muted">Booking Reference: <strong th:text="${'#' + rental.id}">123456</strong></p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Vehicle Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex mb-3">
+                                        <div class="me-3">
+                                            <img th:if="${rental.vehicle.imageUrl}" th:src="${rental.vehicle.imageUrl}" class="img-fluid rounded" alt="Vehicle Image" style="width: 100px; height: 70px; object-fit: cover;">
+                                            <img th:unless="${rental.vehicle.imageUrl}" th:src="@{/images/vehicle-placeholder.jpg}" class="img-fluid rounded" alt="Vehicle Image" style="width: 100px; height: 70px; object-fit: cover;">
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1" th:text="${rental.vehicle.make + ' ' + rental.vehicle.model}">Vehicle Name</h5>
+                                            <p class="mb-0 text-muted" th:text="${rental.vehicle.year + ' • ' + rental.vehicle.color}">Year • Color</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <strong>Registration:</strong> <span th:text="${rental.vehicle.registrationNumber}">ABC123</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Daily Rate:</strong> <span th:text="${'$' + rental.vehicle.dailyRate}">$50.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Booking Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <strong>Start Date:</strong> <span th:text="${#temporals.format(rental.startDate, 'dd-MM-yyyy')}">01-01-2025</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>End Date:</strong> <span th:text="${#temporals.format(rental.endDate, 'dd-MM-yyyy')}">05-01-2025</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Duration:</strong> <span th:text="${rental.rentalDays + ' days'}">5 days</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Total Cost:</strong> <span th:text="${'$' + rental.totalCost}">$250.00</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Status:</strong> 
+                                        <span th:if="${rental.status == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                        <span th:if="${rental.status == 'ACTIVE'}" class="badge bg-success">Active</span>
+                                        <span th:if="${rental.status == 'COMPLETED'}" class="badge bg-secondary">Completed</span>
+                                        <span th:if="${rental.status == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Payment Status:</strong> 
+                                        <span th:if="${rental.paymentStatus == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                        <span th:if="${rental.paymentStatus == 'PAID'}" class="badge bg-success">Paid</span>
+                                        <span th:if="${rental.paymentStatus == 'REFUNDED'}" class="badge bg-info">Refunded</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Important Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="mb-0">
+                                <li>Please bring your driving license and a valid ID when picking up the vehicle.</li>
+                                <li>The vehicle must be returned in the same condition as it was received.</li>
+                                <li>Fuel policy: Return with the same amount of fuel as received.</li>
+                                <li>Late returns will incur additional charges at 120% of the daily rate.</li>
+                                <li>You can cancel your booking up to 24 hours before the start date without any charges.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/rentals/my}" class="btn btn-primary">View My Rentals</a>
+                        <a th:if="${rental.status == 'PENDING'}" th:href="@{/rentals/cancel/{id}(id=${rental.id})}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel Booking</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -11,12 +11,22 @@
             <div class="container text-center">
                 <h1 class="display-4 fw-bold mb-4 text-white">Sri Lanka's Premier Vehicle Rental Service</h1>
                 <p class="lead mb-4 text-white">A reliable and efficient way to rent vehicles for your needs in Sri Lanka</p>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <!-- Only show Register and Login buttons for non-logged in users -->
+                <div th:if="${session.user == null}" class="d-grid gap-2 d-md-flex justify-content-md-center">
                     <a th:href="@{/register}" class="btn btn-dark btn-lg px-4 me-md-2">
                         <i class="fas fa-user-plus"></i> Register Now
                     </a>
                     <a th:href="@{/login}" class="btn btn-outline-light btn-lg px-4">
                         <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </div>
+                <!-- Show a different call-to-action for logged in users -->
+                <div th:if="${session.user != null}" class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a th:href="@{/vehicles}" class="btn btn-primary btn-lg px-4 me-md-2">
+                        <i class="fas fa-car-side"></i> Browse Vehicles
+                    </a>
+                    <a th:href="@{/profile}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-user"></i> My Profile
                     </a>
                 </div>
             </div>

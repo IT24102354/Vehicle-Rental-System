@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Profile - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-edit"></i> Update Profile
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/profile}" th:object="${user}" method="post">
+                            <!-- Hidden Fields -->
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{username}">
+                            <input type="hidden" th:field="*{password}">
+                            <input type="hidden" th:field="*{role}">
+                            
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-info-circle"></i> Basic Information
+                            </h5>
+                            
+                            <div class="row">
+                                <!-- Username (Read-only) -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="usernameReadOnly" class="form-label">Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="usernameReadOnly" 
+                                               th:value="*{username}" readonly>
+                                    </div>
+                                </div>
+                                
+                                <!-- Email Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" id="email" 
+                                               th:field="*{email}" required>
+                                    </div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('email')}" 
+                                         th:errors="*{email}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Full Name Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                        <input type="text" class="form-control" id="fullName" 
+                                               th:field="*{fullName}" required>
+                                    </div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('fullName')}" 
+                                         th:errors="*{fullName}"></div>
+                                </div>
+                                
+                                <!-- Phone Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        <input type="text" class="form-control" id="phone" 
+                                               th:field="*{phone}" required>
+                                    </div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('phone')}" 
+                                         th:errors="*{phone}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Address Field -->
+                                <div class="col-md-12 mb-3">
+                                    <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                        <input type="text" class="form-control" id="address" 
+                                               th:field="*{address}" required>
+                                    </div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('address')}" 
+                                         th:errors="*{address}"></div>
+                                </div>
+                            </div>
+                            
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">
+                                <i class="fas fa-id-badge"></i> Identity Information
+                            </h5>
+                            
+                            <div class="row">
+                                <!-- NIC Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="nicNumber" class="form-label">NIC Number <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-id-card-alt"></i></span>
+                                        <input type="text" class="form-control" id="nicNumber" 
+                                               th:field="*{nicNumber}" required>
+                                    </div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('nicNumber')}" 
+                                         th:errors="*{nicNumber}"></div>
+                                </div>
+                                
+                                <!-- Driving License Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="drivingLicenseNumber" class="form-label">Driving License No. <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                        <input type="text" class="form-control" id="drivingLicenseNumber" 
+                                               th:field="*{drivingLicenseNumber}" required>
+                                    </div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('drivingLicenseNumber')}" 
+                                         th:errors="*{drivingLicenseNumber}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Driving License Expiry -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="drivingLicenseExpiry" class="form-label">License Expiry Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        <input type="date" class="form-control" id="drivingLicenseExpiry" 
+                                               th:field="*{drivingLicenseExpiry}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">
+                                <i class="fas fa-ambulance"></i> Emergency Contact Information
+                            </h5>
+                            
+                            <div class="row">
+                                <!-- Emergency Contact Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="emergencyContactName" class="form-label">Emergency Contact Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user-friends"></i></span>
+                                        <input type="text" class="form-control" id="emergencyContactName" 
+                                               th:field="*{emergencyContactName}">
+                                    </div>
+                                </div>
+                                
+                                <!-- Emergency Contact Phone -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="emergencyContactPhone" class="form-label">Emergency Contact Phone</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+                                        <input type="text" class="form-control" id="emergencyContactPhone" 
+                                               th:field="*{emergencyContactPhone}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-dark">
+                                    <i class="fas fa-save"></i> Update Profile
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Back to Dashboard Link -->
+                        <div class="mt-3 text-center">
+                            <a th:href="@{/dashboard}" class="btn btn-outline-dark">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

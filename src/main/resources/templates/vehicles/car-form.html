@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${formAction == 'add' ? 'Add New Car' : 'Edit Car'} + ' - Vehicle Rental System'">Car Form</title>
+</head>
+<body>
+    <section>
+        <div class="container mt-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/vehicles}">Vehicles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${formAction == 'add' ? 'Add New Car' : 'Edit Car'}">Car Form</li>
+                </ol>
+            </nav>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0" th:text="${formAction == 'add' ? 'Add New Car' : 'Edit Car'}">Car Form</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Alert Messages -->
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
+                    <form th:action="${formAction == 'add' ? '/vehicles/add/car' : '/vehicles/edit/car/' + car.id}" 
+                          th:object="${car}" method="post" class="needs-validation" novalidate>
+                        
+                        <!-- Hidden field for ID when editing -->
+                        <input type="hidden" th:if="${formAction == 'edit'}" th:field="*{id}" />
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Basic Information</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="registrationNumber" class="form-label">Registration Number *</label>
+                                    <input type="text" class="form-control" id="registrationNumber" name="registrationNumber" th:field="*{registrationNumber}" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('registrationNumber')}" th:errors="*{registrationNumber}">
+                                        Registration number is required.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="make" class="form-label">Make *</label>
+                                    <input type="text" class="form-control" id="make" name="make" th:field="*{make}" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('make')}" th:errors="*{make}">
+                                        Make is required.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="model" class="form-label">Model *</label>
+                                    <input type="text" class="form-control" id="model" name="model" th:field="*{model}" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('model')}" th:errors="*{model}">
+                                        Model is required.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="year" class="form-label">Year *</label>
+                                    <input type="number" class="form-control" id="year" name="year" th:field="*{year}" min="1900" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">
+                                        Year must be at least 1900.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="color" class="form-label">Color *</label>
+                                    <input type="text" class="form-control" id="color" name="color" th:field="*{color}" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('color')}" th:errors="*{color}">
+                                        Color is required.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="dailyRate" class="form-label">Daily Rate (USD) *</label>
+                                    <input type="number" class="form-control" id="dailyRate" name="dailyRate" th:field="*{dailyRate}" min="0" step="0.01" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dailyRate')}" th:errors="*{dailyRate}">
+                                        Daily rate must be positive.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="available" name="available" th:field="*{available}" autocomplete="off">
+                                        <label class="form-check-label" for="available">Available for Rent</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Car Specific Details</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="numberOfDoors" class="form-label">Number of Doors *</label>
+                                    <input type="number" class="form-control" id="numberOfDoors" name="numberOfDoors" th:field="*{numberOfDoors}" min="2" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('numberOfDoors')}" th:errors="*{numberOfDoors}">
+                                        Number of doors must be at least 2.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="numberOfSeats" class="form-label">Number of Seats *</label>
+                                    <input type="number" class="form-control" id="numberOfSeats" name="numberOfSeats" th:field="*{numberOfSeats}" min="1" required autocomplete="off">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('numberOfSeats')}" th:errors="*{numberOfSeats}">
+                                        Number of seats must be at least 1.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="carType" class="form-label">Car Type</label>
+                                    <select class="form-select" id="carType" name="carType" th:field="*{carType}" autocomplete="off">
+                                        <option value="">Select Car Type</option>
+                                        <option value="Sedan">Sedan</option>
+                                        <option value="SUV">SUV</option>
+                                        <option value="Hatchback">Hatchback</option>
+                                        <option value="Coupe">Coupe</option>
+                                        <option value="Convertible">Convertible</option>
+                                        <option value="Wagon">Wagon</option>
+                                        <option value="Van">Van</option>
+                                        <option value="Minivan">Minivan</option>
+                                        <option value="Pickup">Pickup</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="hasAirConditioning" name="hasAirConditioning" th:field="*{hasAirConditioning}" autocomplete="off">
+                                        <label class="form-check-label" for="hasAirConditioning">Has Air Conditioning</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="hasNavigation" name="hasNavigation" th:field="*{hasNavigation}" autocomplete="off">
+                                        <label class="form-check-label" for="hasNavigation">Has Navigation</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="hasAutomaticTransmission" name="hasAutomaticTransmission" th:field="*{hasAutomaticTransmission}" autocomplete="off">
+                                        <label class="form-check-label" for="hasAutomaticTransmission">Has Automatic Transmission</label>
+                                    </div>
+                                </div>
+                                
+                                <h4 class="mb-3 mt-4">Additional Information</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="fuelType" class="form-label">Fuel Type</label>
+                                    <select class="form-select" id="fuelType" name="fuelType" th:field="*{fuelType}" autocomplete="off">
+                                        <option value="">Select Fuel Type</option>
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Electric">Electric</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                        <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+                                        <option value="CNG">CNG</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="transmissionType" class="form-label">Transmission Type</label>
+                                    <select class="form-select" id="transmissionType" name="transmissionType" th:field="*{transmissionType}" autocomplete="off">
+                                        <option value="">Select Transmission Type</option>
+                                        <option value="Manual">Manual</option>
+                                        <option value="Automatic">Automatic</option>
+                                        <option value="CVT">CVT</option>
+                                        <option value="Semi-Automatic">Semi-Automatic</option>
+                                        <option value="DCT">DCT</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="mileage" class="form-label">Mileage (km)</label>
+                                    <input type="number" class="form-control" id="mileage" name="mileage" th:field="*{mileage}" min="0" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4 class="mb-3">Additional Details</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="imageUrl" class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" id="imageUrl" name="imageUrl" th:field="*{imageUrl}" autocomplete="off">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="3" autocomplete="off"></textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="lastMaintenanceDate" class="form-label">Last Maintenance Date</label>
+                                    <input type="date" class="form-control" id="lastMaintenanceDate" name="lastMaintenanceDate" th:field="*{lastMaintenanceDate}" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/vehicles}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary" th:text="${formAction == 'add' ? 'Add Car' : 'Update Car'}">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
