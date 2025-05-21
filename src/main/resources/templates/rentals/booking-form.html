@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Book Vehicle - Vehicle Rental System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <section>
+        <div class="container py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/vehicles}">Vehicles</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/vehicles/{id}(id=${vehicle.id})}" th:text="${vehicle.make + ' ' + vehicle.model}">Vehicle Details</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Book Vehicle</li>
+                </ol>
+            </nav>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Book Vehicle</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/rentals/book/{id}(id=${vehicle.id})}" method="post" class="needs-validation" novalidate>
+                                <div class="mb-3">
+                                    <label for="vehicleInfo" class="form-label">Vehicle</label>
+                                    <input type="text" class="form-control" id="vehicleInfo" th:value="${vehicle.make + ' ' + vehicle.model + ' (' + vehicle.year + ')'}" readonly>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="dailyRate" class="form-label">Daily Rate</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="text" class="form-control" id="dailyRate" th:value="${vehicle.dailyRate}" readonly>
+                                        <input type="hidden" id="hiddenDailyRate" th:value="${vehicle.dailyRate}">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="startDate" class="form-label">Start Date *</label>
+                                        <input type="date" class="form-control date-picker" id="startDate" name="startDate" 
+                                               th:min="${minDate}" th:max="${maxDate}" required>
+                                        <div class="invalid-feedback">
+                                            Please select a start date.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="endDate" class="form-label">End Date *</label>
+                                        <input type="date" class="form-control date-picker" id="endDate" name="endDate" 
+                                               th:min="${minDate}" th:max="${maxDate}" required>
+                                        <div class="invalid-feedback">
+                                            Please select an end date.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mb-3">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <i class="fas fa-info-circle"></i>
+                                        </div>
+                                        <div>
+                                            <p class="mb-0">The total cost will be calculated automatically based on the daily rate and the number of days between your selected dates.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notes (Optional)</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="alert alert-info mb-4">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <i class="fas fa-info-circle fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="alert-heading mb-1">Booking Information</h5>
+                                            <p class="mb-0">Your booking will be confirmed immediately. You can cancel your booking up to 24 hours before the start date without any charges.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-4">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Rental Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Daily Rate:</span>
+                                            <span>$<span id="displayDailyRate" th:text="${vehicle.dailyRate}">0.00</span></span>
+                                        </div>
+                                        <div class="alert alert-success mb-0">
+                                            <small>
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                The total cost will be calculated when you submit the booking based on your selected dates.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Book Now</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Vehicle Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <img th:if="${vehicle.imageUrl}" th:src="${vehicle.imageUrl}" class="img-fluid rounded" alt="Vehicle Image" style="max-height: 200px; object-fit: cover;">
+                                <img th:unless="${vehicle.imageUrl}" th:src="@{/images/vehicle-placeholder.jpg}" class="img-fluid rounded" alt="Vehicle Image" style="max-height: 200px; object-fit: cover;">
+                            </div>
+                            
+                            <h5 th:text="${vehicle.make + ' ' + vehicle.model}">Vehicle Name</h5>
+                            <p class="text-muted" th:text="${vehicle.year + ' • ' + vehicle.color}">Year • Color</p>
+                            
+                            <hr>
+                            
+                            <div class="mb-2">
+                                <strong>Registration:</strong> <span th:text="${vehicle.registrationNumber}"></span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>Daily Rate:</strong> <span th:text="${'$' + vehicle.dailyRate}"></span>
+                            </div>
+                            <div class="mb-2" th:if="${vehicle.fuelType}">
+                                <strong>Fuel Type:</strong> <span th:text="${vehicle.fuelType}"></span>
+                            </div>
+                            <div class="mb-2" th:if="${vehicle.transmissionType}">
+                                <strong>Transmission:</strong> <span th:text="${vehicle.transmissionType}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Define the calculation function globally
+        function calculateTotal() {
+            console.log('Calculate button clicked!');
+            
+            // Get input values directly
+            const startDateStr = document.getElementById('startDate').value;
+            const endDateStr = document.getElementById('endDate').value;
+            
+            console.log('Start date string:', startDateStr);
+            console.log('End date string:', endDateStr);
+            
+            if (!startDateStr || !endDateStr) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            // Create date objects
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+            
+            // Get the daily rate
+            const dailyRateText = document.getElementById('displayDailyRate').textContent;
+            const dailyRate = parseFloat(dailyRateText);
+            
+            console.log('Daily rate text:', dailyRateText);
+            console.log('Daily rate parsed:', dailyRate);
+            
+            // Calculate days between dates
+            const timeDiff = endDate - startDate;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            
+            // Ensure at least 1 day for same-day rentals
+            const rentalDays = daysDiff <= 0 ? 1 : daysDiff;
+            
+            // Calculate total cost
+            const totalCost = rentalDays * dailyRate;
+            
+            console.log('Days difference:', daysDiff);
+            console.log('Rental days:', rentalDays);
+            console.log('Total cost:', totalCost);
+            
+            // Update the UI
+            document.getElementById('numberOfDays').textContent = rentalDays;
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+            
+            // Show a confirmation message
+            alert('Calculation complete! Days: ' + rentalDays + ', Total Cost: $' + totalCost.toFixed(2));
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize date pickers
+            const startDatePicker = flatpickr("#startDate", {
+                minDate: document.getElementById('startDate').getAttribute('min'),
+                maxDate: document.getElementById('startDate').getAttribute('max')
+            });
+            
+            const endDatePicker = flatpickr("#endDate", {
+                minDate: document.getElementById('endDate').getAttribute('min'),
+                maxDate: document.getElementById('endDate').getAttribute('max'),
+                onChange: calculateTotal
+            });
+            
+            // Add event listeners to date inputs
+            document.getElementById('startDate').addEventListener('input', calculateTotal);
+            document.getElementById('endDate').addEventListener('input', calculateTotal);
+            
+            // Form validation
+            const form = document.querySelector('.needs-validation');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            });
+        });
+    </script>
+</body>
+</html>

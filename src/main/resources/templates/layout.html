@@ -35,14 +35,58 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}"><i class="fas fa-home"></i> Home</a>
                     </li>
-                    <li class="nav-item d-none d-md-block">
-                        <a class="nav-link" href="#"><i class="fas fa-car-side"></i> Vehicles</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-car-side"></i> Vehicles
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/vehicles}"><i class="fas fa-list"></i> All Vehicles</a></li>
+                            <li><a class="dropdown-item" th:href="@{/vehicles/search}"><i class="fas fa-search"></i> Search Vehicles</a></li>
+                            <!-- Only show add vehicle options for admin users -->
+                            <li th:if="${session.user != null && session.user.role == 'ADMIN'}"><hr class="dropdown-divider"></li>
+                            <li th:if="${session.user != null && session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/vehicles/add/car}"><i class="fas fa-car"></i> Add Car</a></li>
+                            <li th:if="${session.user != null && session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/vehicles/add/bike}"><i class="fas fa-motorcycle"></i> Add Bike</a></li>
+                            <li th:if="${session.user != null && session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/vehicles/add/truck}"><i class="fas fa-truck"></i> Add Truck</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item d-none d-md-block">
+                    <li class="nav-item dropdown" th:if="${session.user != null}">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-clipboard-list"></i> Rentals
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/rentals/my}"><i class="fas fa-history"></i> My Rentals</a></li>
+                            <li th:if="${session.user.role == 'ADMIN'}"><hr class="dropdown-divider"></li>
+                            <li th:if="${session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/rentals/all}"><i class="fas fa-list-alt"></i> All Rentals</a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Payment Management Menu -->
+                    <li class="nav-item dropdown" th:if="${session.user != null}">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-credit-card"></i> Payments
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/payments/history}"><i class="fas fa-history"></i> My Payments</a></li>
+                            <li th:if="${session.user.role == 'ADMIN'}"><hr class="dropdown-divider"></li>
+                            <li th:if="${session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/payments/invoices}"><i class="fas fa-file-invoice-dollar"></i> All Invoices</a></li>
+                        </ul>
+                    </li>
+                    <!-- <li class="nav-item d-none d-md-block">
                         <a class="nav-link" href="#"><i class="fas fa-info-circle"></i> About</a>
                     </li>
                     <li class="nav-item d-none d-md-block">
                         <a class="nav-link" href="#"><i class="fas fa-phone-alt"></i> Contact</a>
+                    </li> -->
+                    <!-- Reviews Management Menu -->
+                    <li class="nav-item dropdown" th:if="${session.user != null}">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-star"></i> Reviews
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/my-reviews}"><i class="fas fa-comments"></i> My Reviews</a></li>
+                            <li th:if="${session.user.role == 'ADMIN'}"><hr class="dropdown-divider"></li>
+                            <li th:if="${session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/admin/reviews}"><i class="fas fa-tasks"></i> Manage Reviews</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item" th:if="${session.user != null}">
                         <a class="nav-link" th:href="@{/users}"><i class="fas fa-users"></i> Users</a>
@@ -55,14 +99,18 @@
                     <li class="nav-item" th:if="${session.user == null}">
                         <a class="nav-link" th:href="@{/register}"><i class="fas fa-user-plus"></i> Register</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/login}"><i class="fas fa-user-shield"></i> Admin Portal</a>
+                    </li>
                     <li class="nav-item dropdown" th:if="${session.user != null}">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle"></i> <span th:text="${session.user.username}">Username</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                            <li><a class="dropdown-item" th:href="@{/profile}"><i class="fas fa-user-edit"></i> Profile</a></li>
+                            <!-- Show Dashboard for regular users, Admin Panel for admins -->
+                            <li th:if="${session.user.role != 'ADMIN'}"><a class="dropdown-item" th:href="@{/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                             <li th:if="${session.user.role == 'ADMIN'}"><a class="dropdown-item" th:href="@{/admin/dashboard}"><i class="fas fa-tools"></i> Admin Panel</a></li>
+                            <li><a class="dropdown-item" th:href="@{/profile}"><i class="fas fa-user-edit"></i> Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         </ul>

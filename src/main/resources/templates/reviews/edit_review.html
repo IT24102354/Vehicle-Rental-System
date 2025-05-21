@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title}, ~{::main})">
+<head>
+    <title>Edit Review | Vehicle Rental Service</title>
+</head>
+<body>
+    <main>
+    
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Edit Review</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Alert Messages -->
+                        <div th:if="${error}" class="alert alert-danger" role="alert">
+                            <span th:text="${error}"></span>
+                        </div>
+                        
+                        <!-- Vehicle Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <img th:if="${vehicle.imageUrl}" th:src="${vehicle.imageUrl}" alt="Vehicle Image" class="img-fluid rounded">
+                                <img th:unless="${vehicle.imageUrl}" th:src="@{/images/default-vehicle.jpg}" alt="Vehicle Image" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-8">
+                                <h4 th:text="${vehicle.make + ' ' + vehicle.model + ' (' + vehicle.year + ')'}"></h4>
+                                <p><strong>Color:</strong> <span th:text="${vehicle.color}"></span></p>
+                                <p><strong>Daily Rate:</strong> $<span th:text="${vehicle.dailyRate}"></span></p>
+                                <p th:if="${vehicle.description}" th:text="${vehicle.description}"></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Review Form -->
+                        <form th:action="@{/reviews/{id}/update(id=${review.id})}" th:object="${review}" method="post">
+                            <div class="form-group">
+                                <label for="rating">Rating (1-5 stars) <span class="text-danger">*</span></label>
+                                <select class="form-control" id="rating" th:field="*{rating}" required>
+                                    <option value="5">★★★★★ (5 stars - Excellent)</option>
+                                    <option value="4">★★★★☆ (4 stars - Very Good)</option>
+                                    <option value="3">★★★☆☆ (3 stars - Good)</option>
+                                    <option value="2">★★☆☆☆ (2 stars - Fair)</option>
+                                    <option value="1">★☆☆☆☆ (1 star - Poor)</option>
+                                </select>
+                                <small class="text-danger" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="comment">Your Review <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="comment" th:field="*{comment}" rows="5" required 
+                                          placeholder="Share your experience with this vehicle..."></textarea>
+                                <small class="text-danger" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></small>
+                            </div>
+                            
+                            <!-- Public Review specific fields -->
+                            <div class="form-group form-check" th:if="${review instanceof T(com.rental.vehicle.model.PublicReview)}">
+                                <input type="checkbox" class="form-check-input" id="displayUserName" th:field="*{displayUserName}">
+                                <label class="form-check-label" for="displayUserName">Display my username with this review</label>
+                            </div>
+                            
+                            <!-- Approval status information -->
+                            <div class="alert alert-info" th:if="${!review.approved && !(review instanceof T(com.rental.vehicle.model.VerifiedReview))}">
+                                <i class="fas fa-info-circle"></i> Your edited review will need to be approved again by an administrator.
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Update Review</button>
+                                <a th:href="@{/my-reviews}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </main>
+</body>
+</html>

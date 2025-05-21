@@ -1,0 +1,84 @@
+/* Admin-specific styles */
+.admin-header {
+    background-color: #343a40;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.admin-header-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 2rem 0;
+}
+
+/* Dashboard cards */
+.admin-stat-card {
+    border-left: 4px solid;
+    transition: transform 0.3s;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.admin-stat-card.primary {
+    border-left-color: #007bff;
+}
+
+.admin-stat-card.success {
+    border-left-color: #28a745;
+}
+
+.admin-stat-card.warning {
+    border-left-color: #ffc107;
+}
+
+.admin-stat-card.danger {
+    border-left-color: #dc3545;
+}
+
+.admin-stat-card .icon {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+/* Admin tables */
+.admin-table th {
+    background-color: #f8f9fa;
+}
+
+.admin-table .action-buttons {
+    white-space: nowrap;
+}
+
+/* Admin forms */
+.admin-form-section {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-section h4 {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive admin layout */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 2rem 0;
+    }
+    
+    .admin-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .admin-header .lead {
+        font-size: 1rem;
+    }
+}
