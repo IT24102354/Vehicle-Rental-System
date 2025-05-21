@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Rental Details - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="container py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/rentals/my}">My Rentals</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Rental Details</li>
+                </ol>
+            </nav>
+            
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${success != null}">
+                <i class="fas fa-check-circle me-2"></i> <span th:text="${success}">Success message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+                <i class="fas fa-exclamation-circle me-2"></i> <span th:text="${error}">Error message</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Rental Details</h5>
+                        <div>
+                            <span th:if="${rental.status == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                            <span th:if="${rental.status == 'ACTIVE'}" class="badge bg-success">Active</span>
+                            <span th:if="${rental.status == 'COMPLETED'}" class="badge bg-secondary">Completed</span>
+                            <span th:if="${rental.status == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Vehicle Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex mb-3">
+                                        <div class="me-3">
+                                            <img th:if="${rental.vehicle.imageUrl}" th:src="${rental.vehicle.imageUrl}" class="img-fluid rounded" alt="Vehicle Image" style="width: 120px; height: 80px; object-fit: cover;">
+                                            <img th:unless="${rental.vehicle.imageUrl}" th:src="@{/images/vehicle-placeholder.jpg}" class="img-fluid rounded" alt="Vehicle Image" style="width: 120px; height: 80px; object-fit: cover;">
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1" th:text="${rental.vehicle.make + ' ' + rental.vehicle.model}">Vehicle Name</h5>
+                                            <p class="mb-0 text-muted" th:text="${rental.vehicle.year + ' • ' + rental.vehicle.color}">Year • Color</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <strong>Registration:</strong> <span th:text="${rental.vehicle.registrationNumber}">ABC123</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Daily Rate:</strong> <span th:text="${'$' + rental.vehicle.dailyRate}">$50.00</span>
+                                    </div>
+                                    <div class="mb-2" th:if="${rental.vehicle.fuelType}">
+                                        <strong>Fuel Type:</strong> <span th:text="${rental.vehicle.fuelType}">Petrol</span>
+                                    </div>
+                                    <div class="mb-2" th:if="${rental.vehicle.transmissionType}">
+                                        <strong>Transmission:</strong> <span th:text="${rental.vehicle.transmissionType}">Automatic</span>
+                                    </div>
+                                    <div class="mt-3">
+                                        <a th:href="@{/vehicles/{id}(id=${rental.vehicle.id})}" class="btn btn-sm btn-outline-primary">View Vehicle Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Rental Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <strong>Booking Reference:</strong> <span th:text="${'#' + rental.id}">123456</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Start Date:</strong> <span th:text="${#temporals.format(rental.startDate, 'dd-MM-yyyy')}">01-01-2025</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>End Date:</strong> <span th:text="${#temporals.format(rental.endDate, 'dd-MM-yyyy')}">05-01-2025</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Duration:</strong> <span th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(rental.startDate, rental.endDate) + ' days'}">5 days</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Total Cost:</strong> <span th:text="${'$' + rental.totalCost}">$250.00</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Status:</strong> 
+                                        <span th:if="${rental.status == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                                        <span th:if="${rental.status == 'ACTIVE'}" class="badge bg-success">Active</span>
+                                        <span th:if="${rental.status == 'COMPLETED'}" class="badge bg-secondary">Completed</span>
+                                        <span th:if="${rental.status == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Payment Status:</strong> 
+                                        <span th:if="${rental.paymentStatus == 'PENDING'}" class="badge bg-warning text-dark">Pending</span>
+                                        <span th:if="${rental.paymentStatus == 'PAID'}" class="badge bg-success">Paid</span>
+                                        <span th:if="${rental.paymentStatus == 'REFUNDED'}" class="badge bg-info">Refunded</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3" th:if="${rental.notes}">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Notes</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0" th:text="${rental.notes}">Rental notes</p>
+                        </div>
+                    </div>
+                    
+
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a th:href="@{/rentals/my}" class="btn btn-secondary">Back to My Rentals</a>
+                        <div>
+                            <!-- Payment button for rentals with pending payment status -->
+                            <a th:if="${rental.paymentStatus == 'PENDING'}" th:href="@{/payments/process/{id}(id=${rental.id})}" class="btn btn-success me-2">
+                                <i class="fas fa-credit-card"></i> Process Payment
+                            </a>
+                            <a th:if="${rental.status == 'PENDING'}" th:href="@{/rentals/edit/{id}(id=${rental.id})}" class="btn btn-primary me-2">Edit</a>
+                            <a th:if="${isAdmin && rental.status == 'PENDING'}" th:href="@{/rentals/activate/{id}(id=${rental.id})}" class="btn btn-success me-2" onclick="return confirm('Are you sure you want to activate this rental now?')">Activate</a>
+                            <a th:if="${rental.status == 'PENDING'}" th:href="@{/rentals/cancel/{id}(id=${rental.id})}" class="btn btn-danger me-2" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel</a>
+                            <a th:if="${isAdmin && rental.status == 'ACTIVE'}" th:href="@{/rentals/return/{id}(id=${rental.id})}" class="btn btn-primary me-2">Process Return</a>
+                            <a th:href="@{/rentals/delete/{id}(id=${rental.id})}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this rental record?')">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Invoice Details</title>
+</head>
+<body>
+    <section class="container my-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Invoice Details</h3>
+                <button class="btn btn-light btn-sm" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Print
+                </button>
+            </div>
+            <div class="card-body p-4" id="printableArea">
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <h4 class="mb-3">Vehicle Rental Service</h4>
+                        <div>123 Galle Road</div>
+                        <div>Colombo 03</div>
+                        <div>Sri Lanka</div>
+                        <div>Email: info@rentals.lk</div>
+                        <div>Phone: +94 11 234 5678</div>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <h4 class="mb-3">Invoice</h4>
+                        <div>Invoice Number: <strong th:text="${invoice.invoiceNumber}"></strong></div>
+                        <div>Date: <span th:text="${#temporals.format(invoice.invoiceDate, 'dd-MM-yyyy')}"></span></div>
+                        <div>Due Date: <span th:text="${#temporals.format(invoice.dueDate, 'dd-MM-yyyy')}"></span></div>
+                        <div class="mt-2">
+                            <span class="badge"
+                                  th:classappend="${invoice.status == 'PAID' ? 'bg-success' : (invoice.status == 'OVERDUE' ? 'bg-danger' : (invoice.status == 'CANCELLED' ? 'bg-secondary' : 'bg-warning'))}"
+                                  th:text="${invoice.status}"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <h5 class="mb-3">Bill To:</h5>
+                        <div><strong th:text="${rental.user.fullName}"></strong></div>
+                        <div th:text="${rental.user.address}"></div>
+                        <div th:text="${rental.user.email}"></div>
+                        <div th:text="${rental.user.phone}"></div>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <h5 class="mb-3">Rental Details:</h5>
+                        <div>Vehicle: <strong th:text="${rental.vehicle.make + ' ' + rental.vehicle.model + ' (' + rental.vehicle.year + ')'}"></strong></div>
+                        <div>Reg Number: <span th:text="${rental.vehicle.registrationNumber}"></span></div>
+                        <div>From: <span th:text="${#temporals.format(rental.startDate, 'dd-MM-yyyy')}"></span></div>
+                        <div>To: <span th:text="${#temporals.format(rental.endDate, 'dd-MM-yyyy')}"></span></div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive mb-4">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong th:text="${rental.vehicle.vehicleType}"></strong> Rental: 
+                                    <span th:text="${rental.vehicle.make + ' ' + rental.vehicle.model + ' (' + rental.vehicle.year + ')'}"></span>
+                                    <div class="text-muted">
+                                        <small>
+                                            Duration: 
+                                            <span th:text="${#temporals.format(rental.startDate, 'dd-MM-yyyy')}"></span> to 
+                                            <span th:text="${#temporals.format(rental.endDate, 'dd-MM-yyyy')}"></span>
+                                        </small>
+                                    </div>
+                                </td>
+                                <td class="text-end" th:text="${#numbers.formatCurrency(invoice.subtotal)}"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="text-end">Subtotal:</td>
+                                <td class="text-end" th:text="${#numbers.formatCurrency(invoice.subtotal)}"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-end">Tax (10%):</td>
+                                <td class="text-end" th:text="${#numbers.formatCurrency(invoice.taxAmount)}"></td>
+                            </tr>
+                            <tr th:if="${invoice.discountAmount != null && invoice.discountAmount.compareTo(new java.math.BigDecimal(0)) > 0}">
+                                <td class="text-end">Discount:</td>
+                                <td class="text-end text-danger" th:text="'-' + ${#numbers.formatCurrency(invoice.discountAmount)}"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-end"><strong>Total:</strong></td>
+                                <td class="text-end"><strong th:text="${#numbers.formatCurrency(invoice.totalAmount)}"></strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-8">
+                        <h5 class="mb-3">Payment Details:</h5>
+                        <div th:if="${invoice.payment != null}">
+                            <div>Method: <span th:text="${invoice.payment.paymentMethod.replace('_', ' ')}"></span></div>
+                            <div>Date: <span th:text="${#temporals.format(invoice.payment.paymentDate, 'dd-MM-yyyy HH:mm')}"></span></div>
+                            <div th:if="${invoice.payment.cardLast4Digits != null}">
+                                Card: XXXX-XXXX-XXXX-<span th:text="${invoice.payment.cardLast4Digits}"></span>
+                            </div>
+                            <div>Amount: <span th:text="${#numbers.formatCurrency(invoice.payment.amount)}"></span></div>
+                            <div>Status: <span class="badge bg-success" th:text="${invoice.payment.status}"></span></div>
+                        </div>
+                        <div th:unless="${invoice.payment != null}" class="text-warning">
+                            <i class="bi bi-exclamation-triangle"></i> No payment recorded for this invoice.
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div th:if="${invoice.notes != null && !invoice.notes.empty}" class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Notes</h6>
+                            </div>
+                            <div class="card-body">
+                                <p th:text="${invoice.notes}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-top pt-4 mt-4">
+                    <p class="text-muted">
+                        <strong>Terms & Conditions:</strong><br>
+                        Payment is due on or before the rental start date. Late payments may incur additional charges.
+                        For any questions concerning this invoice, please contact our customer service.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a th:href="@{/payments/history}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Payment History
+                        </a>
+                    </div>
+                    <div th:if="${session.user != null && session.user.role == 'ADMIN' && invoice.status != 'PAID'}">
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#discountModal">
+                            <i class="bi bi-percent"></i> Apply Discount
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Discount Modal for Admins -->
+        <div th:if="${session.user != null && session.user.role == 'ADMIN' && invoice.status != 'PAID'}" class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/payments/invoice/{id}/discount(id=${invoice.id})}" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="discountModalLabel">Apply Discount</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="discountPercent" class="form-label">Discount Percentage (%)*</label>
+                                <input type="number" class="form-control" id="discountPercent" name="discountPercent" min="0" max="100" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reason" class="form-label">Reason*</label>
+                                <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Apply Discount</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printableArea, #printableArea * {
+                visibility: visible;
+            }
+            #printableArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+</html>

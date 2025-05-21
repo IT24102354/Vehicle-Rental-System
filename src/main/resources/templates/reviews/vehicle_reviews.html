@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title}, ~{::main})">
+<head>
+    <title>Vehicle Reviews | Vehicle Rental Service</title>
+    <style>
+        .star-rating {
+            color: #ffc107;
+        }
+        .review-card {
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .verified-badge {
+            background-color: #28a745;
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        .review-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <main>
+    
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/vehicles}">Vehicles</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/vehicles/{id}(id=${vehicle.id})}" th:text="${vehicle.make + ' ' + vehicle.model}"></a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Reviews</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" role="alert">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+        
+        <div class="row">
+            <!-- Vehicle Info -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div th:if="${vehicle.imageUrl}">
+                        <img th:src="${vehicle.imageUrl}" class="card-img-top" alt="Vehicle Image">
+                    </div>
+                    <div th:unless="${vehicle.imageUrl}">
+                        <img th:src="@{/images/default-vehicle.jpg}" class="card-img-top" alt="Vehicle Image">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title" th:text="${vehicle.make + ' ' + vehicle.model}"></h4>
+                        <h6 class="card-subtitle mb-2 text-muted" th:text="${vehicle.year}"></h6>
+                        
+                        <div class="my-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="star-rating">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                          th:class="${i <= averageRating ? 'fas fa-star' : (i <= averageRating + 0.5 ? 'fas fa-star-half-alt' : 'far fa-star')}"></span>
+                                </div>
+                                <span class="ml-2 font-weight-bold" th:text="${#numbers.formatDecimal(averageRating, 1, 1)} + ' out of 5'"></span>
+                            </div>
+                            <p class="mb-1" th:text="${reviews.size()} + ' customer reviews'"></p>
+                        </div>
+                        
+                        <p><strong>Color:</strong> <span th:text="${vehicle.color}"></span></p>
+                        <p><strong>Daily Rate:</strong> $<span th:text="${vehicle.dailyRate}"></span></p>
+                        <p th:if="${vehicle.description}" th:text="${vehicle.description}"></p>
+                        
+                        <div class="mt-3">
+                            <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-car"></i> View Vehicle Details
+                            </a>
+                            <a th:if="${user != null && canReview}" th:href="@{/vehicles/{id}/review(id=${vehicle.id})}" class="btn btn-primary btn-block mt-2">
+                                <i class="fas fa-pen"></i> Write a Review
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reviews -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Customer Reviews</h3>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${reviews.empty}" class="text-center py-5">
+                            <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No reviews yet for this vehicle</h5>
+                            <p class="mb-4">Be the first to review this vehicle!</p>
+                            <a th:if="${user != null && canReview}" th:href="@{/vehicles/{id}/review(id=${vehicle.id})}" class="btn btn-primary">
+                                <i class="fas fa-pen"></i> Write a Review
+                            </a>
+                            <a th:if="${user == null}" th:href="@{/login}" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt"></i> Login to Write a Review
+                            </a>
+                        </div>
+                        
+                        <div th:unless="${reviews.empty}">
+                            <div th:each="review : ${reviews}" class="card review-card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <h5 class="card-title mb-0">
+                                                <!-- Show username based on display preference -->
+                                                <span th:if="${review instanceof T(com.rental.vehicle.model.PublicReview) && 
+                                                             !(review.displayUserName != null && review.displayUserName)}">
+                                                    Anonymous User
+                                                </span>
+                                                <span th:unless="${review instanceof T(com.rental.vehicle.model.PublicReview) && 
+                                                               !(review.displayUserName != null && review.displayUserName)}"
+                                                      th:text="${review.user.username}"></span>
+                                                      
+                                                <!-- Verified badge -->
+                                                <span th:if="${review instanceof T(com.rental.vehicle.model.VerifiedReview)}" 
+                                                      class="verified-badge">
+                                                    <i class="fas fa-check-circle"></i> Verified Rental
+                                                </span>
+                                            </h5>
+                                            <span class="review-date" 
+                                                  th:text="${#temporals.format(review.createdAt, 'dd MMM yyyy')}"></span>
+                                        </div>
+                                        <div class="star-rating">
+                                            <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                                  th:class="${i <= review.rating ? 'fas fa-star' : 'far fa-star'}"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="card-text" th:text="${review.comment}"></p>
+                                    
+                                    <!-- Show update date if updated -->
+                                    <p th:if="${review.updatedAt != null}" class="card-text small text-muted">
+                                        <em>Edited on <span th:text="${#temporals.format(review.updatedAt, 'dd MMM yyyy')}"></span></em>
+                                    </p>
+                                    
+                                    <!-- Show verified details if available -->
+                                    <p th:if="${review instanceof T(com.rental.vehicle.model.VerifiedReview) && 
+                                               review.verificationDetails != null}" 
+                                       class="card-text small text-success">
+                                        <i class="fas fa-info-circle"></i> <span th:text="${review.verificationDetails}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </main>
+</body>
+</html>

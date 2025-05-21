@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Process Payment</title>
+</head>
+<body>
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Process Payment</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <p><strong>Rental Details:</strong></p>
+                            <p>Vehicle: <span th:text="${rental.vehicle.make + ' ' + rental.vehicle.model}"></span></p>
+                            <p>Duration: <span th:text="${rental.startDate}"></span> to <span th:text="${rental.endDate}"></span></p>
+                            <p>Total Amount: <span th:text="${#numbers.formatCurrency(rental.totalCost)}"></span></p>
+                        </div>
+                        
+                        <form th:action="@{/payments/process/{id}(id=${rental.id})}" method="post" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Payment Method*</label>
+                                <select class="form-select" id="paymentMethod" name="paymentMethod" required>
+                                    <option value="">Select Payment Method</option>
+                                    <option th:each="method : ${paymentMethods}" th:value="${method}" th:text="${method.replace('_', ' ')}"></option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a payment method.
+                                </div>
+                            </div>
+                            
+                            <div id="cardDetails" class="d-none">
+                                <div class="mb-3">
+                                    <label for="cardNumber" class="form-label">Card Number*</label>
+                                    <input type="text" class="form-control" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid card number.
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="expiryDate" class="form-label">Expiration Date*</label>
+                                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                                        <div class="invalid-feedback">
+                                            Please enter a valid expiry date.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cvv" class="form-label">CVV*</label>
+                                        <input type="text" class="form-control" id="cvv" placeholder="XXX">
+                                        <div class="invalid-feedback">
+                                            Please enter a valid CVV.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="cardName" class="form-label">Name on Card*</label>
+                                    <input type="text" class="form-control" id="cardName">
+                                    <div class="invalid-feedback">
+                                        Please enter the name on card.
+                                    </div>
+                                </div>
+                                
+                                <!-- Hidden field to store the last 4 digits -->
+                                <input type="hidden" id="cardLast4Digits" name="cardLast4Digits">
+                            </div>
+                            
+                            <div id="bankTransferDetails" class="d-none">
+                                <div class="alert alert-warning">
+                                    <p><strong>Bank Transfer Instructions:</strong></p>
+                                    <p>Account Name: Vehicle Rental Service</p>
+                                    <p>Account Number: 1234567890</p>
+                                    <p>Bank: ABC Bank</p>
+                                    <p>Branch: Colombo Main</p>
+                                    <p>Reference: Please use your rental ID as reference: <span th:text="${rental.id}"></span></p>
+                                </div>
+                            </div>
+                            
+                            <div class="text-end mt-4">
+                                <a th:href="@{/rentals/my}" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary ms-2">Process Payment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            const cardDetails = document.getElementById('cardDetails');
+            const bankTransferDetails = document.getElementById('bankTransferDetails');
+            const cardNumberInput = document.getElementById('cardNumber');
+            const cardLast4DigitsInput = document.getElementById('cardLast4Digits');
+            
+            // Show/hide payment details based on selected method
+            paymentMethodSelect.addEventListener('change', function() {
+                if (this.value === 'CREDIT_CARD' || this.value === 'DEBIT_CARD') {
+                    cardDetails.classList.remove('d-none');
+                    bankTransferDetails.classList.add('d-none');
+                } else if (this.value === 'BANK_TRANSFER') {
+                    cardDetails.classList.add('d-none');
+                    bankTransferDetails.classList.remove('d-none');
+                } else {
+                    cardDetails.classList.add('d-none');
+                    bankTransferDetails.classList.add('d-none');
+                }
+            });
+            
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                if (paymentMethodSelect.value === 'CREDIT_CARD' || paymentMethodSelect.value === 'DEBIT_CARD') {
+                    if (!validateCardDetails()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return;
+                    }
+                    
+                    // Extract last 4 digits from card number
+                    const cardNumber = cardNumberInput.value.replace(/\s+/g, '');
+                    const last4Digits = cardNumber.substring(cardNumber.length - 4);
+                    cardLast4DigitsInput.value = last4Digits;
+                }
+                
+                form.classList.add('was-validated');
+            });
+            
+            function validateCardDetails() {
+                const cardNumber = cardNumberInput.value.replace(/\s+/g, '');
+                const expiryDate = document.getElementById('expiryDate').value;
+                const cvv = document.getElementById('cvv').value;
+                const cardName = document.getElementById('cardName').value;
+                
+                if (cardNumber.length < 13 || cardNumber.length > 19) {
+                    return false;
+                }
+                
+                if (!expiryDate.match(/^\d{2}\/\d{2}$/)) {
+                    return false;
+                }
+                
+                if (!cvv.match(/^\d{3,4}$/)) {
+                    return false;
+                }
+                
+                if (cardName.trim() === '') {
+                    return false;
+                }
+                
+                return true;
+            }
+        });
+    </script>
+</body>
+</html>

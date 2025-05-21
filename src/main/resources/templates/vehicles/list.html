@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Vehicle Listing - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="container mt-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2>Vehicle Listing</h2>
+                </div>
+                <div class="col-md-4 text-end" th:if="${session.user != null && session.user.role == 'ADMIN'}">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="addVehicleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Add Vehicle
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="addVehicleDropdown">
+                            <li><a class="dropdown-item" th:href="@{/vehicles/add/car}">Add Car</a></li>
+                            <li><a class="dropdown-item" th:href="@{/vehicles/add/bike}">Add Bike</a></li>
+                            <li><a class="dropdown-item" th:href="@{/vehicles/add/truck}">Add Truck</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search and Filter Form -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form th:action="@{/vehicles}" method="get" class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="Search by make, model, or color">
+                                <button class="btn btn-outline-secondary" type="submit">Search</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" name="type" onchange="this.form.submit()">
+                                <option value="">All Vehicle Types</option>
+                                <option value="car" th:selected="${type == 'car'}">Cars</option>
+                                <option value="bike" th:selected="${type == 'bike'}">Bikes</option>
+                                <option value="truck" th:selected="${type == 'truck'}">Trucks</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <a th:href="@{/vehicles/search}" class="btn btn-secondary w-100">Advanced Search</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <!-- Vehicle Cards -->
+            <div class="row">
+                <div th:if="${vehicles.empty}" class="col-12">
+                    <div class="alert alert-info">No vehicles found.</div>
+                </div>
+                <div th:each="vehicle : ${vehicles}" class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <span th:if="${vehicle.available}" class="badge bg-success">Available</span>
+                            <span th:unless="${vehicle.available}" class="badge bg-danger">Not Available</span>
+                        </div>
+                        <img th:if="${vehicle.imageUrl}" th:src="${vehicle.imageUrl}" class="card-img-top" alt="Vehicle Image" style="height: 200px; object-fit: cover;">
+                        <img th:unless="${vehicle.imageUrl}" th:src="@{/images/vehicle-placeholder.jpg}" class="card-img-top" alt="Vehicle Image" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${vehicle.make + ' ' + vehicle.model}"></h5>
+                            <p class="card-text">
+                                <span class="badge bg-info" th:text="${vehicle.vehicleType}"></span>
+                                <span th:text="${vehicle.year}"></span> • 
+                                <span th:text="${vehicle.color}"></span>
+                            </p>
+                            <p class="card-text">
+                                <strong>Registration:</strong> <span th:text="${vehicle.registrationNumber}"></span>
+                            </p>
+                            <p class="card-text">
+                                <strong>Daily Rate:</strong> <span th:text="${'$' + vehicle.dailyRate}"></span>
+                            </p>
+                            <div class="d-flex justify-content-between mt-3">
+                                <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-primary">View Details</a>
+                                <div class="dropdown" th:if="${session.user != null && session.user.role == 'ADMIN'}">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li th:if="${vehicle.vehicleType == 'Car'}">
+                                            <a class="dropdown-item" th:href="@{/vehicles/edit/car/{id}(id=${vehicle.id})}">Edit</a>
+                                        </li>
+                                        <li th:if="${vehicle.vehicleType == 'Bike'}">
+                                            <a class="dropdown-item" th:href="@{/vehicles/edit/bike/{id}(id=${vehicle.id})}">Edit</a>
+                                        </li>
+                                        <li th:if="${vehicle.vehicleType == 'Truck'}">
+                                            <a class="dropdown-item" th:href="@{/vehicles/edit/truck/{id}(id=${vehicle.id})}">Edit</a>
+                                        </li>
+                                        <li><a class="dropdown-item text-danger" th:href="@{/vehicles/delete/{id}(id=${vehicle.id})}" onclick="return confirm('Are you sure you want to delete this vehicle?')">Delete</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mt-2" th:if="${vehicle.available && session.user != null && session.user.role != 'ADMIN'}">
+                                <a th:href="@{/rentals/book/{id}(id=${vehicle.id})}" class="btn btn-success w-100">
+                                    <i class="fas fa-calendar-check me-1"></i> Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

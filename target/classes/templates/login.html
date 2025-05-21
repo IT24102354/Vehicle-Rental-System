@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Login - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <!-- Hero Section with title -->
+        <div class="hero-section" style="height: 200px;">
+            <div class="container text-center">
+                <h1 class="display-4 fw-bold text-high-contrast-light"><i class="fas fa-sign-in-alt"></i> Login</h1>
+                <p class="lead text-high-contrast-light">Access your account and manage your rentals</p>
+            </div>
+        </div>
+        
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow">
+                        <div class="card-header bg-dark">
+                            <h4 class="mb-0 text-white"><i class="fas fa-user-circle"></i> Login to Your Account</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Alert for errors (if any) -->
+                            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle"></i> Invalid username or password!
+                            </div>
+                            
+                            <form th:action="@{/login}" method="post" class="needs-validation" novalidate>
+                                <!-- Username Field -->
+                                <div class="mb-4">
+                                    <label for="username" class="form-label text-high-contrast-dark">
+                                        <i class="fas fa-user"></i> Username
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark text-white">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="username" 
+                                               name="username" placeholder="Enter your username" required>
+                                    </div>
+                                </div>
+                                
+                                <!-- Password Field -->
+                                <div class="mb-4">
+                                    <label for="password" class="form-label text-high-contrast-dark">
+                                        <i class="fas fa-lock"></i> Password
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark text-white">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="password" 
+                                               name="password" placeholder="Enter your password" required>
+                                        <button class="btn btn-outline-dark toggle-password" type="button" data-target="password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Submit Button -->
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="submit" class="btn btn-dark btn-lg">
+                                        <i class="fas fa-sign-in-alt"></i> Login
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <!-- Register Link -->
+                            <div class="mt-4 text-center">
+                                <p class="mb-0 text-high-contrast-dark">
+                                    Don't have an account? <a th:href="@{/register}" class="text-decoration-none fw-bold">
+                                        <i class="fas fa-user-plus"></i> Register here
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

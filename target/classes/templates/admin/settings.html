@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Admin Settings - Vehicle Rental System</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Admin Settings</h2>
+            <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary">Back to Dashboard</a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">System Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Application Name:</strong>
+                            <span>Vehicle Rental System</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Version:</strong>
+                            <span>1.0.0</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Environment:</strong>
+                            <span>Development</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Database:</strong>
+                            <span>H2 (In-Memory)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Admin Account</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Admin Username:</strong>
+                            <span th:text="${user.username}">admin</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Admin Email:</strong>
+                            <span th:text="${user.email}">admin@example.com</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Last Login:</strong>
+                            <span>Current Session</span>
+                        </div>
+                        <div class="d-grid">
+                            <a th:href="@{/profile}" class="btn btn-outline-primary">Update Admin Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">System Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="d-grid">
+                                    <a href="#" class="btn btn-outline-primary">View System Logs</a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="d-grid">
+                                    <a href="#" class="btn btn-outline-primary">Database Management</a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="d-grid">
+                                    <a href="#" class="btn btn-outline-danger">System Backup</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

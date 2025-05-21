@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{admin/layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${reportType.substring(0, 1).toUpperCase() + reportType.substring(1)} + ' Reports - Vehicle Rental System'"></title>
+</head>
+<body>
+    <section>
+        <div class="container-fluid px-4 py-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${reportType.substring(0, 1).toUpperCase() + reportType.substring(1)} + ' Reports'"></li>
+                </ol>
+            </nav>
+            
+            <!-- Report Types Tabs -->
+            <ul class="nav nav-pills mb-4">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportType == 'user'} ? 'active'" href="/admin/reports/user">
+                        <i class="fas fa-users me-1"></i> User Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportType == 'vehicle'} ? 'active'" href="/admin/reports/vehicle">
+                        <i class="fas fa-car me-1"></i> Vehicle Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportType == 'rental'} ? 'active'" href="/admin/reports/rental">
+                        <i class="fas fa-file-contract me-1"></i> Rental Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportType == 'financial'} ? 'active'" href="/admin/reports/financial">
+                        <i class="fas fa-money-bill-wave me-1"></i> Financial Reports
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- User Reports -->
+            <div th:if="${reportType == 'user'}" class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">User Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-primary" th:text="${userStats.total}">0</div>
+                                    <div class="text-muted">Total Users</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-success" th:text="${userStats.admin}">0</div>
+                                    <div class="text-muted">Admin Users</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-info" th:text="${userStats.regular}">0</div>
+                                    <div class="text-muted">Regular Users</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <canvas id="userChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">User List</h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="printReport">
+                                    <i class="fas fa-print me-1"></i> Print
+                                </button>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary" id="exportCSV">
+                                        <i class="fas fa-file-csv me-1"></i> CSV
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="exportPDF">
+                                        <i class="fas fa-file-pdf me-1"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Full Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="user : ${users}">
+                                            <td th:text="${user.id}"></td>
+                                            <td th:text="${user.username}"></td>
+                                            <td th:text="${user.fullName}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.phone}"></td>
+                                            <td>
+                                                <span th:if="${user.role == 'ADMIN'}" class="badge bg-primary">Admin</span>
+                                                <span th:if="${user.role == 'USER'}" class="badge bg-secondary">User</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vehicle Reports -->
+            <div th:if="${reportType == 'vehicle'}" class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Vehicle Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-primary" th:text="${vehicleStats.total}">0</div>
+                                    <div class="text-muted">Total Vehicles</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-success" th:text="${vehicleStats.available}">0</div>
+                                    <div class="text-muted">Available</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-danger" th:text="${vehicleStats.rented}">0</div>
+                                    <div class="text-muted">Rented</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <h6 class="text-center mb-3">Vehicle Types</h6>
+                                <div class="row text-center">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="h5 fw-bold text-primary" th:text="${vehicleStats.cars}">0</div>
+                                        <div class="small text-muted">Cars</div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="h5 fw-bold text-success" th:text="${vehicleStats.bikes}">0</div>
+                                        <div class="small text-muted">Bikes</div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="h5 fw-bold text-info" th:text="${vehicleStats.trucks}">0</div>
+                                        <div class="small text-muted">Trucks</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <canvas id="vehicleChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Vehicle List</h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="printVehicleReport">
+                                    <i class="fas fa-print me-1"></i> Print
+                                </button>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary" id="exportVehicleCSV">
+                                        <i class="fas fa-file-csv me-1"></i> CSV
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="exportVehiclePDF">
+                                        <i class="fas fa-file-pdf me-1"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Registration</th>
+                                            <th>Vehicle</th>
+                                            <th>Type</th>
+                                            <th>Daily Rate</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="vehicle : ${vehicles}">
+                                            <td th:text="${vehicle.id}"></td>
+                                            <td th:text="${vehicle.registrationNumber}"></td>
+                                            <td th:text="${vehicle.make + ' ' + vehicle.model + ' (' + vehicle.year + ')'}"></td>
+                                            <td th:text="${vehicle.vehicleType}"></td>
+                                            <td th:text="'$' + ${vehicle.dailyRate}"></td>
+                                            <td>
+                                                <span th:if="${vehicle.available}" class="badge bg-success">Available</span>
+                                                <span th:unless="${vehicle.available}" class="badge bg-danger">Rented</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rental Reports -->
+            <div th:if="${reportType == 'rental'}" class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Rental Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-primary" th:text="${rentalStats.total}">0</div>
+                                    <div class="text-muted">Total Rentals</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-success" th:text="${rentalStats.active}">0</div>
+                                    <div class="text-muted">Active</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="display-4 fw-bold text-info" th:text="${rentalStats.completed}">0</div>
+                                    <div class="text-muted">Completed</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <canvas id="rentalChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Rental List</h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="printRentalReport">
+                                    <i class="fas fa-print me-1"></i> Print
+                                </button>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary" id="exportRentalCSV">
+                                        <i class="fas fa-file-csv me-1"></i> CSV
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="exportRentalPDF">
+                                        <i class="fas fa-file-pdf me-1"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>User</th>
+                                            <th>Vehicle</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Total Cost</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="rental : ${rentals}">
+                                            <td th:text="${rental.id}"></td>
+                                            <td th:text="${rental.user.fullName}"></td>
+                                            <td th:text="${rental.vehicle.make + ' ' + rental.vehicle.model}"></td>
+                                            <td th:text="${rental.startDate}"></td>
+                                            <td th:text="${rental.endDate}"></td>
+                                            <td th:text="'$' + ${rental.totalCost}"></td>
+                                            <td>
+                                                <span th:if="${rental.status == 'ACTIVE'}" class="badge bg-success">Active</span>
+                                                <span th:if="${rental.status == 'COMPLETED'}" class="badge bg-info">Completed</span>
+                                                <span th:if="${rental.status == 'CANCELLED'}" class="badge bg-danger">Cancelled</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Reports -->
+            <div th:if="${reportType == 'financial'}" class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Financial Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-6 mb-3">
+                                    <div class="display-5 fw-bold text-success" th:text="'$' + ${totalRevenue}">$0</div>
+                                    <div class="text-muted">Total Revenue</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="display-5 fw-bold text-warning" th:text="'$' + ${pendingRevenue}">$0</div>
+                                    <div class="text-muted">Pending Revenue</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6 class="mb-3">Revenue by Payment Method</h6>
+                                <div th:each="entry : ${revenueByMethod}" class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span th:text="${entry.key}">Method</span>
+                                        <span class="fw-bold" th:text="'$' + ${entry.value}">$0</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             th:style="'width: ' + (${entry.value} / ${totalRevenue} * 100) + '%'" 
+                                             th:attr="aria-valuenow=${entry.value},aria-valuemin=0,aria-valuemax=${totalRevenue}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <canvas id="financialChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Payment Transactions</h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="printFinancialReport">
+                                    <i class="fas fa-print me-1"></i> Print
+                                </button>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary" id="exportFinancialCSV">
+                                        <i class="fas fa-file-csv me-1"></i> CSV
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="exportFinancialPDF">
+                                        <i class="fas fa-file-pdf me-1"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Rental ID</th>
+                                            <th>User</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Method</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="payment : ${payments}">
+                                            <td th:text="${payment.id}"></td>
+                                            <td th:text="${payment.rental.id}"></td>
+                                            <td th:text="${payment.rental.user.fullName}"></td>
+                                            <td th:text="${payment.paymentDate}"></td>
+                                            <td th:text="'$' + ${payment.amount}"></td>
+                                            <td th:text="${payment.paymentMethod}"></td>
+                                            <td>
+                                                <span th:if="${payment.status == 'COMPLETED'}" class="badge bg-success">Completed</span>
+                                                <span th:if="${payment.status == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                                <span th:if="${payment.status == 'FAILED'}" class="badge bg-danger">Failed</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chart.js for Data Visualization -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:inline="javascript">
+            // Chart initialization for appropriate report type
+            document.addEventListener('DOMContentLoaded', function() {
+                // Use safe access with null checks
+                const reportType = /*[[${reportType}]]*/ 'user';
+                const reportData = /*[[${reportData}]]*/ {};
+                
+                // Initialize charts only if the elements exist
+                if (reportType === 'user') {
+                    const userChartElement = document.getElementById('userChart');
+                    if (userChartElement) {
+                        const userCtx = userChartElement.getContext('2d');
+                        const userData = {
+                            admin: reportData.adminUsers || 0,
+                            regular: reportData.totalUsers - (reportData.adminUsers || 0)
+                        };
+                        
+                        new Chart(userCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Admin Users', 'Regular Users'],
+                                datasets: [{
+                                    data: [userData.admin, userData.regular],
+                                    backgroundColor: ['#198754', '#0dcaf0']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'User Distribution'
+                                    },
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                if (reportType === 'vehicle') {
+                    const vehicleChartElement = document.getElementById('vehicleChart');
+                    if (vehicleChartElement) {
+                        const vehicleCtx = vehicleChartElement.getContext('2d');
+                        const vehicleData = {
+                            cars: reportData.carCount || 0,
+                            bikes: reportData.bikeCount || 0,
+                            trucks: reportData.truckCount || 0
+                        };
+                        
+                        new Chart(vehicleCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Cars', 'Bikes', 'Trucks'],
+                                datasets: [{
+                                    label: 'Vehicle Types',
+                                    data: [vehicleData.cars, vehicleData.bikes, vehicleData.trucks],
+                                    backgroundColor: ['#0d6efd', '#198754', '#0dcaf0']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Vehicle Types Distribution'
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                if (reportType === 'rental') {
+                    const rentalChartElement = document.getElementById('rentalChart');
+                    if (rentalChartElement) {
+                        const rentalCtx = rentalChartElement.getContext('2d');
+                        const rentalData = {
+                            active: reportData.activeRentals || 0,
+                            completed: reportData.completedRentals || 0,
+                            cancelled: reportData.cancelledRentals || 0
+                        };
+                        
+                        new Chart(rentalCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Active', 'Completed', 'Cancelled'],
+                                datasets: [{
+                                    data: [rentalData.active, rentalData.completed, rentalData.cancelled],
+                                    backgroundColor: ['#198754', '#0dcaf0', '#dc3545']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Rental Status Distribution'
+                                    },
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                if (reportType === 'financial') {
+                    const financialChartElement = document.getElementById('financialChart');
+                    if (financialChartElement) {
+                        const financialCtx = financialChartElement.getContext('2d');
+                        
+                        // Safely access payment method stats
+                        const paymentMethodStats = reportData.paymentMethodStats || {};
+                        const methods = Object.keys(paymentMethodStats);
+                        const amounts = methods.map(key => paymentMethodStats[key]);
+                        
+                        new Chart(financialCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: methods,
+                                datasets: [{
+                                    label: 'Revenue by Payment Method',
+                                    data: amounts,
+                                    backgroundColor: '#198754'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Revenue by Payment Method'
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                // Initialize chart for general reports page that shows all report types
+                const userStatsChart = document.getElementById('userStatsChart');
+                if (userStatsChart) {
+                    const userStatsCtx = userStatsChart.getContext('2d');
+                    new Chart(userStatsCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Regular Users', 'Admin Users'],
+                            datasets: [{
+                                data: [reportData.totalUsers - 5, 5], // Sample data
+                                backgroundColor: ['#0dcaf0', '#198754']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                const vehicleStatsChart = document.getElementById('vehicleStatsChart');
+                if (vehicleStatsChart) {
+                    const vehicleStatsCtx = vehicleStatsChart.getContext('2d');
+                    new Chart(vehicleStatsCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Available', 'Rented'],
+                            datasets: [{
+                                data: [reportData.availableVehicles || 0, reportData.rentedVehicles || 0],
+                                backgroundColor: ['#198754', '#dc3545']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                const rentalStatusChart = document.getElementById('rentalStatusChart');
+                if (rentalStatusChart) {
+                    const rentalStatusCtx = rentalStatusChart.getContext('2d');
+                    new Chart(rentalStatusCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Active', 'Completed'],
+                            datasets: [{
+                                data: [reportData.activeRentals || 0, reportData.completedRentals || 0],
+                                backgroundColor: ['#198754', '#0dcaf0']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                const financialOverviewChart = document.getElementById('financialOverviewChart');
+                if (financialOverviewChart) {
+                    const financialOverviewCtx = financialOverviewChart.getContext('2d');
+                    const paymentData = reportData.paymentMethodStats || {};
+                    
+                    new Chart(financialOverviewCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: Object.keys(paymentData),
+                            datasets: [{
+                                data: Object.values(paymentData),
+                                backgroundColor: ['#0d6efd', '#198754', '#0dcaf0', '#ffc107']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    </section>
+</body>
+</html>
