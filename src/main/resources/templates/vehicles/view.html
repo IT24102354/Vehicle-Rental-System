@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${vehicle.make + ' ' + vehicle.model} + ' - Vehicle Rental System'">Vehicle Details</title>
+</head>
+<body>
+    <section>
+        <div class="container mt-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/vehicles}">Vehicles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${vehicle.make + ' ' + vehicle.model}">Vehicle Details</li>
+                </ol>
+            </nav>
+            
+            <div class="card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img th:if="${vehicle.imageUrl}" th:src="${vehicle.imageUrl}" class="img-fluid rounded-start" alt="Vehicle Image" style="height: 100%; object-fit: cover;">
+                        <img th:unless="${vehicle.imageUrl}" th:src="@{/images/vehicle-placeholder.jpg}" class="img-fluid rounded-start" alt="Vehicle Image" style="height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h2 class="card-title" th:text="${vehicle.make + ' ' + vehicle.model}">Vehicle Name</h2>
+                                <span th:if="${vehicle.available}" class="badge bg-success fs-6">Available</span>
+                                <span th:unless="${vehicle.available}" class="badge bg-danger fs-6">Not Available</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="badge bg-info me-2" th:text="${vehicleType}">Vehicle Type</span>
+                                <span class="badge bg-secondary me-2" th:text="${vehicle.year}">Year</span>
+                                <span class="badge bg-secondary" th:text="${vehicle.color}">Color</span>
+                            </div>
+                            
+                            <p class="card-text" th:if="${vehicle.description}" th:text="${vehicle.description}">Description</p>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p><strong>Registration Number:</strong> <span th:text="${vehicle.registrationNumber}"></span></p>
+                                    <p><strong>Daily Rate:</strong> <span th:text="${'$' + vehicle.dailyRate}"></span></p>
+                                    <p th:if="${vehicle.fuelType}"><strong>Fuel Type:</strong> <span th:text="${vehicle.fuelType}"></span></p>
+                                    <p th:if="${vehicle.transmissionType}"><strong>Transmission:</strong> <span th:text="${vehicle.transmissionType}"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p th:if="${vehicle.mileage}"><strong>Mileage:</strong> <span th:text="${vehicle.mileage + ' km'}"></span></p>
+                                    <p th:if="${vehicle.lastMaintenanceDate}"><strong>Last Maintenance:</strong> <span th:text="${#temporals.format(vehicle.lastMaintenanceDate, 'dd-MM-yyyy')}"></span></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Car specific details -->
+                            <div th:if="${vehicleType == 'car'}" class="card mb-3">
+                                <div class="card-header bg-light">Car Details</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Number of Doors:</strong> <span th:text="${car.numberOfDoors}"></span></p>
+                                            <p><strong>Number of Seats:</strong> <span th:text="${car.numberOfSeats}"></span></p>
+                                            <p th:if="${car.carType}"><strong>Car Type:</strong> <span th:text="${car.carType}"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Air Conditioning:</strong> <span th:text="${car.hasAirConditioning ? 'Yes' : 'No'}"></span></p>
+                                            <p><strong>Navigation:</strong> <span th:text="${car.hasNavigation ? 'Yes' : 'No'}"></span></p>
+                                            <p><strong>Automatic Transmission:</strong> <span th:text="${car.hasAutomaticTransmission ? 'Yes' : 'No'}"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bike specific details -->
+                            <div th:if="${vehicleType == 'bike'}" class="card mb-3">
+                                <div class="card-header bg-light">Bike Details</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Engine Capacity:</strong> <span th:text="${bike.engineCapacity + ' cc'}"></span></p>
+                                            <p th:if="${bike.bikeType}"><strong>Bike Type:</strong> <span th:text="${bike.bikeType}"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>ABS:</strong> <span th:text="${bike.hasABS ? 'Yes' : 'No'}"></span></p>
+                                            <p><strong>Bluetooth:</strong> <span th:text="${bike.hasBluetooth ? 'Yes' : 'No'}"></span></p>
+                                            <p th:if="${bike.licenseRequirement}"><strong>License Requirement:</strong> <span th:text="${bike.licenseRequirement}"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Truck specific details -->
+                            <div th:if="${vehicleType == 'truck'}" class="card mb-3">
+                                <div class="card-header bg-light">Truck Details</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Payload Capacity:</strong> <span th:text="${truck.payloadCapacity + ' tons'}"></span></p>
+                                            <p><strong>Volume Capacity:</strong> <span th:text="${truck.volumeCapacity + ' m³'}"></span></p>
+                                            <p><strong>Number of Axles:</strong> <span th:text="${truck.numberOfAxles}"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p th:if="${truck.truckType}"><strong>Truck Type:</strong> <span th:text="${truck.truckType}"></span></p>
+                                            <p><strong>Tail Lift:</strong> <span th:text="${truck.hasTailLift ? 'Yes' : 'No'}"></span></p>
+                                            <p><strong>Refrigeration:</strong> <span th:text="${truck.hasRefrigeration ? 'Yes' : 'No'}"></span></p>
+                                            <p th:if="${truck.licenseRequirement}"><strong>License Requirement:</strong> <span th:text="${truck.licenseRequirement}"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action buttons -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a th:href="@{/vehicles}" class="btn btn-secondary">Back to List</a>
+                                <div th:if="${session.user != null && session.user.role == 'ADMIN'}">
+                                    <a th:if="${vehicleType == 'car'}" th:href="@{/vehicles/edit/car/{id}(id=${vehicle.id})}" class="btn btn-primary me-2">Edit</a>
+                                    <a th:if="${vehicleType == 'bike'}" th:href="@{/vehicles/edit/bike/{id}(id=${vehicle.id})}" class="btn btn-primary me-2">Edit</a>
+                                    <a th:if="${vehicleType == 'truck'}" th:href="@{/vehicles/edit/truck/{id}(id=${vehicle.id})}" class="btn btn-primary me-2">Edit</a>
+                                    <a th:href="@{/vehicles/delete/{id}(id=${vehicle.id})}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this vehicle?')">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

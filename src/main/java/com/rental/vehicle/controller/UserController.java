@@ -198,23 +198,51 @@ public class UserController {
     }
     
     /**
-     * Display users list (user search functionality)
+     * Display users list with search functionality
+     * @param keyword Search keyword
      * @param model Model for view
      * @param session HTTP session
      * @return Users list view or redirect to login
      */
     @GetMapping("/users")
-    public String listUsers(Model model, HttpSession session) {
+    public String listUsers(@RequestParam(required = false) String keyword, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         
         if (user == null) {
             return "redirect:/login";
         }
         
-        List<User> users = userService.getAllUsers();
+        List<User> users;
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // Search users by keyword
+            users = searchUsers(keyword.trim());
+            model.addAttribute("keyword", keyword);
+        } else {
+            // Get all users if no search keyword
+            users = userService.getAllUsers();
+        }
+        
         model.addAttribute("users", users);
         model.addAttribute("user", user);
         return "users";
+    }
+    
+    /**
+     * Search users by keyword
+     * @param keyword Search keyword
+     * @return List of matching users
+     */
+    private List<User> searchUsers(String keyword) {
+        List<User> allUsers = userService.getAllUsers();
+        String lowercaseKeyword = keyword.toLowerCase();
+        
+        return allUsers.stream()
+            .filter(user -> 
+                user.getUsername().toLowerCase().contains(lowercaseKeyword) ||
+                user.getFullName().toLowerCase().contains(lowercaseKeyword) ||
+                user.getEmail().toLowerCase().contains(lowercaseKeyword))
+            .toList();
     }
     
     /**

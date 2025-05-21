@@ -1,0 +1,10 @@
+This folder contains placeholder images for the Vehicle Rental System.
+
+Since we can't directly download external images, we'll use CSS to create visual placeholders instead.
+
+In a production environment, you would replace these with actual images of:
+- Vehicles
+- Admin banners
+- User profile images
+- Logo images
+- etc.

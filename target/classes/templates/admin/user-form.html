@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{admin/layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${isEdit ? 'Edit User' : 'Add New User'} + ' - Vehicle Rental System'">User Form</title>
+</head>
+<body>
+    <section>
+        <!-- Admin Header Banner -->
+        <div class="admin-header">
+            <div class="admin-header-overlay">
+                <div class="container">
+                    <h2 class="mb-2" th:text="${isEdit ? 'Edit User' : 'Add New User'}">User Form</h2>
+                    <p class="lead" th:text="${isEdit ? 'Update existing user information' : 'Create a new user account'}">Manage user information</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${isEdit ? 'Edit User' : 'Add New User'}">User Form</li>
+                </ol>
+            </nav>
+            
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0" th:text="${isEdit ? 'Edit User Details' : 'New User Details'}">User Details</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="${isEdit ? '/admin/user/edit/' + newUser.id : '/admin/user/add'}" th:object="${newUser}" method="post" class="needs-validation" novalidate>
+                        
+                        <!-- Account Information -->
+                        <div class="admin-form-section">
+                            <h4>Account Information</h4>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="username" class="form-label">Username*</label>
+                                    <input type="text" class="form-control" id="username" th:field="*{username}" required th:readonly="${isEdit}">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+                                        Please provide a valid username.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Password*</label>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                                        Please provide a valid password.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email*</label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                                        Please provide a valid email.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="role" class="form-label">Role*</label>
+                                    <select class="form-select" id="role" th:field="*{role}" required>
+                                        <option value="USER">Regular User</option>
+                                        <option value="ADMIN">Administrator</option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" th:errors="*{role}">
+                                        Please select a role.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Personal Information -->
+                        <div class="admin-form-section">
+                            <h4>Personal Information</h4>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="fullName" class="form-label">Full Name*</label>
+                                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">
+                                        Please provide a full name.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number*</label>
+                                    <input type="text" class="form-control" id="phone" th:field="*{phone}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">
+                                        Please provide a valid phone number.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="address" class="form-label">Address*</label>
+                                    <textarea class="form-control" id="address" th:field="*{address}" rows="3" required></textarea>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">
+                                        Please provide an address.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ID Information -->
+                        <div class="admin-form-section">
+                            <h4>Identification Information</h4>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nicNumber" class="form-label">NIC Number*</label>
+                                    <input type="text" class="form-control" id="nicNumber" th:field="*{nicNumber}" required>
+                                    <div class="form-text">Format: 9 digits followed by V/X or 12 digits</div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nicNumber')}" th:errors="*{nicNumber}">
+                                        Please provide a valid NIC number.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="drivingLicenseNumber" class="form-label">Driving License Number*</label>
+                                    <input type="text" class="form-control" id="drivingLicenseNumber" th:field="*{drivingLicenseNumber}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('drivingLicenseNumber')}" th:errors="*{drivingLicenseNumber}">
+                                        Please provide a valid driving license number.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary" th:text="${isEdit ? 'Update User' : 'Add User'}">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        // Form validation script
+        (function () {
+            'use strict'
+            
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+            
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+</body>
+</html>
