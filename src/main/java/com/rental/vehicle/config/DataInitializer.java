@@ -1,18 +1,12 @@
 package com.rental.vehicle.config;
 
-import com.rental.vehicle.model.Admin;
 import com.rental.vehicle.model.Bike;
 import com.rental.vehicle.model.Car;
-import com.rental.vehicle.model.StaffAdmin;
-import com.rental.vehicle.model.SuperAdmin;
 import com.rental.vehicle.model.Truck;
 import com.rental.vehicle.model.User;
 import com.rental.vehicle.model.Vehicle;
-import com.rental.vehicle.repository.AdminRepository;
 import com.rental.vehicle.repository.BikeRepository;
 import com.rental.vehicle.repository.CarRepository;
-import com.rental.vehicle.repository.StaffAdminRepository;
-import com.rental.vehicle.repository.SuperAdminRepository;
 import com.rental.vehicle.repository.TruckRepository;
 import com.rental.vehicle.repository.UserRepository;
 import com.rental.vehicle.repository.VehicleRepository;
@@ -23,12 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Data initializer to create default users and sample vehicles on application startup
@@ -50,20 +39,10 @@ public class DataInitializer implements CommandLineRunner {
     
     @Autowired
     private TruckRepository truckRepository;
-    
-    @Autowired
-    private AdminRepository adminRepository;
-    
-    @Autowired
-    private SuperAdminRepository superAdminRepository;
-    
-    @Autowired
-    private StaffAdminRepository staffAdminRepository;
 
     @Override
     public void run(String... args) throws Exception {
         createUsers();
-        createAdmins();
         createSampleVehicles();
     }
     
@@ -105,77 +84,6 @@ public class DataInitializer implements CommandLineRunner {
             
             userRepository.save(regularUser);
             System.out.println("Default regular user created successfully");
-        }
-    }
-    
-    /**
-     * Create default admin users (SuperAdmin and StaffAdmin)
-     */
-    private void createAdmins() {
-        // Check if super admin already exists
-        Optional<Admin> existingSuperAdmin = adminRepository.findByUsername("superadmin");
-        if (existingSuperAdmin.isEmpty()) {
-            // Create super admin
-            SuperAdmin superAdmin = new SuperAdmin();
-            superAdmin.setName("Super Administrator");
-            superAdmin.setEmail("superadmin@rentalservice.lk");
-            superAdmin.setUsername("superadmin");
-            superAdmin.setPassword("superadmin123"); // In production, this should be encrypted
-            superAdmin.setRole("SUPER_ADMIN");
-            superAdmin.setActive(true);
-            superAdmin.setLastLoginDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            superAdmin.setCanManageAdmins(true);
-            superAdmin.setCanViewReports(true);
-            superAdmin.setCanConfigureSystem(true);
-            
-            // Add permissions
-            Set<String> superAdminPermissions = new HashSet<>();
-            superAdminPermissions.add("MANAGE_ADMINS");
-            superAdminPermissions.add("VIEW_REPORTS");
-            superAdminPermissions.add("MANAGE_SYSTEM_CONFIG");
-            superAdminPermissions.add("MANAGE_USERS");
-            superAdminPermissions.add("MANAGE_VEHICLES");
-            superAdminPermissions.add("MANAGE_RENTALS");
-            superAdmin.setPermissions(superAdminPermissions);
-            
-            superAdminRepository.save(superAdmin);
-            System.out.println("Default super admin created successfully");
-        } else {
-            System.out.println("Super admin already exists");
-        }
-        
-        // Check if staff admin already exists
-        Optional<Admin> existingStaffAdmin = adminRepository.findByUsername("staffadmin");
-        if (existingStaffAdmin.isEmpty()) {
-            // Create staff admin
-            StaffAdmin staffAdmin = new StaffAdmin();
-            staffAdmin.setName("Staff Administrator");
-            staffAdmin.setEmail("staffadmin@rentalservice.lk");
-            staffAdmin.setUsername("staffadmin");
-            staffAdmin.setPassword("staffadmin123"); // In production, this should be encrypted
-            staffAdmin.setRole("STAFF_ADMIN");
-            staffAdmin.setActive(true);
-            staffAdmin.setLastLoginDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            staffAdmin.setDepartment("Customer Service");
-            
-            // Set permissions for staff admin
-            staffAdmin.setCanManageUsers(true);
-            staffAdmin.setCanManageVehicles(true);
-            staffAdmin.setCanManageRentals(true);
-            staffAdmin.setCanViewReports(true);
-            
-            // Add specific permissions
-            Set<String> staffAdminPermissions = new HashSet<>();
-            staffAdminPermissions.add("VIEW_REPORTS");
-            staffAdminPermissions.add("MANAGE_USERS");
-            staffAdminPermissions.add("MANAGE_VEHICLES");
-            staffAdminPermissions.add("MANAGE_RENTALS");
-            staffAdmin.setPermissions(staffAdminPermissions);
-            
-            staffAdminRepository.save(staffAdmin);
-            System.out.println("Default staff admin created successfully");
-        } else {
-            System.out.println("Staff admin already exists");
         }
     }
     
